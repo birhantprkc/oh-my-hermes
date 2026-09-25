@@ -175,7 +175,12 @@ SKILL_INDEX_LINE_CHAR_LIMIT = 100
 # tells the model to relay the receipt with observed cost, unpriced usage and
 # missing records kept apart. Reusing this tool instead of adding one keeps the
 # growth to those two sentences. Re-derived from the producer.
-PLUGIN_TOOL_SCHEMA_CHAR_LIMIT = 59451
+# 59451 -> 60871: the `omh_resume` schema (1420), the read a session calls
+# when the person asks to continue work from another surface. It replaces
+# nothing per turn: the alternative, carrying earlier work in `pre_llm_call`
+# or the primer, would be paid on every turn whether or not anyone asked.
+# Re-derived from the producer.
+PLUGIN_TOOL_SCHEMA_CHAR_LIMIT = 60871
 # The largest fenced `pre_llm_call` context over the named scenario set in
 # `src/maintenance/per_turn_context.py` (the `all_surfaces` scenario). Hermes
 # replays each turn's injection from `api_content` on every later turn, so this

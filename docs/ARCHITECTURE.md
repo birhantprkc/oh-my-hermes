@@ -213,7 +213,8 @@ plugin registers deterministic
 `omh_interact` chat/session interaction, `omh_recommend` route hints,
 metadata-only `omh_probe` capability status/roadmap, compact metadata-only
 `omh_hud`, detailed metadata-only `omh_status`, `omh_todo` plan-todo
-declaration for the HUD checklist panel, `omh_role` role context,
+declaration for the HUD checklist panel, `omh_resume` read-only recall of the
+same person's plans and checkpoints from their other sessions, `omh_role` role context,
 `omh_route_answer` metadata-only recording of an answer to the `route_question`
 an undecidable route carries, a bounded `omh_gather_evidence` local
 verification probe, and passive lifecycle hooks for bounded status context,

@@ -1778,6 +1778,47 @@ When the managed plugin is actually invoked, hosts can also pass bounded
 same `omh_plugin_host_observation/v1` event automatically, without storing raw
 prompts or tool bodies. This proves only the recorded plugin tool/hook use.
 
+### Picking work up on another surface
+
+Audience: users first, then wrapper and plugin maintainers. People do not call
+the tool; they say "continue what I was doing" in the TUI, Desktop, or a chat
+thread, and Hermes calls `omh_resume`.
+
+`omh_resume` reads the person's earlier work in this profile: each plan todo
+another of their sessions declared in the last 24 hours, with its item states,
+and each completion checkpoint one of those sessions froze in the last 30
+days. It joins them to Hermes' own `state.db` rows for the surface, when the
+session was last active, its tool-call count, and its repository name and
+branch, and renders plain text newest first in the `text` field. It writes
+nothing and adds nothing to any other turn.
+
+Who is "the same person" comes only from those rows, never from the message:
+
+- Every local surface (`cli`, `tui`, `desktop`, `acp`) is the profile's own
+  user, so the TUI and Desktop see each other's plans.
+- A chat-platform session counts only in a direct message: the calling row's
+  `source` and `user_id` with `chat_type` `dm`. A Slack user sees their own
+  earlier Slack direct messages and no one else's, which matters because one
+  gateway profile serves many people. A group channel or thread is refused:
+  its row names one user while anyone in the room can ask, and everyone there
+  would read the answer.
+- Hermes records no link between a platform user and the local user, or
+  between one platform's user and another's, so those crossings are not made.
+  Hermes' own `/handoff` moves a whole session to a platform when that is what
+  the person wants.
+- A surface that names no person (webhook, cron, a delegated subagent
+  session, a shared chat), a session `state.db` does not list yet, or an
+  unreadable `state.db` gets a plain statement that nothing is shown, never
+  another person's work. Delegated subagent sessions and sessions the person
+  archived or hid are not listed as earlier work either.
+
+A plan whose declaring session this profile's `state.db` does not list is
+never shown, so two profiles sharing one OMH home stay apart. The summary is
+metadata only: no session title, activity description, deferral reason or
+transcript. Plan item text that looks like a credential is redacted before
+it is relayed. Items marked done are that session's declarations, not observed
+results, and the text says so.
+
 ## Install Path A: Hermes-Native Skill Tap
 
 Use this path when the target Hermes environment supports skill taps:

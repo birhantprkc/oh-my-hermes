@@ -170,6 +170,7 @@ def register(ctx: _PluginContext) -> None:
     from .tools.memory_tool import OMH_MEMORY_SCHEMA, omh_memory_handler
     from .tools.probe_tool import OMH_PROBE_SCHEMA, omh_probe_handler
     from .tools.recommend_tool import OMH_RECOMMEND_SCHEMA, omh_recommend_handler
+    from .tools.resume_tool import OMH_RESUME_SCHEMA, omh_resume_handler
     from .tools.role_tool import OMH_ROLE_SCHEMA, omh_role_handler
     from .tools.route_answer_tool import OMH_ROUTE_ANSWER_SCHEMA, omh_route_answer_handler
     from .tools.run_summary_tool import OMH_RUN_SUMMARY_SCHEMA, omh_run_summary_handler
@@ -281,6 +282,13 @@ def register(ctx: _PluginContext) -> None:
         OMH_RECOMMEND_SCHEMA,
         omh_recommend_handler,
         description=OMH_RECOMMEND_SCHEMA["description"],
+    )
+    _ = ctx.register_tool(
+        "omh_resume",
+        _TOOLSET,
+        OMH_RESUME_SCHEMA,
+        omh_resume_handler,
+        description=OMH_RESUME_SCHEMA["description"],
     )
     _ = ctx.register_tool(
         "omh_role",

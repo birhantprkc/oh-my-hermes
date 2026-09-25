@@ -91,6 +91,25 @@ All notable changes will be documented here.
   estimated, and every receipt names what it does not cover. Operators get the
   same text from `omh quality-evidence cost-receipt --session <id>` (`--json`
   for the payload).
+- **"Continue what I was doing" works across Hermes surfaces.** A new
+  read-only plugin tool, `omh_resume`, returns the person's recent OMH work
+  from their other sessions in the same profile: the plan todo each session
+  declared (last 24 hours) and the completion checkpoints it froze (last 30
+  days), joined to Hermes' own session rows for the surface, timing, tool-call
+  count, repository name and branch. Plain text is the default rendering, in
+  the `text` field. Who counts as the same person comes only from `state.db`:
+  every local surface (`cli`, `tui`, `desktop`, `acp`) is the profile's user,
+  and a chat-platform user counts only in a direct message (`source` +
+  `user_id`, `chat_type` `dm`), so one Slack user never sees another's plan,
+  the local user never sees theirs, and a group channel or thread, where
+  anyone can ask and everyone reads the answer, is refused. Hermes
+  records no link between a platform user and the local user, so that
+  crossing is not made; a surface that names no person (webhook, cron, a
+  delegated subagent session) is shown nothing. A session another profile's `state.db` lists is never read,
+  even when the profiles share one OMH home. Metadata only: no session title,
+  activity description, deferral reason or transcript. Nothing is added to
+  `pre_llm_call` or the primer; the tool schema raises
+  `PLUGIN_TOOL_SCHEMA_CHAR_LIMIT` 59258 -> 60678.
 
 - **The plugin admits a Hermes git checkout by the release it resolves, not
   the install stamp's placeholder.** Released Hermes through 0.21.5 hard-codes

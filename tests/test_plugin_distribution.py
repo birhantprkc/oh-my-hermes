@@ -951,6 +951,7 @@ print(json.dumps(observed, ensure_ascii=False))
                     "omh_memory",
                     "omh_probe",
                     "omh_recommend",
+                    "omh_resume",
                     "omh_role",
                     "omh_route_answer",
                     "omh_run_summary",
