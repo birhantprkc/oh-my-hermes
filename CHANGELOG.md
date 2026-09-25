@@ -65,6 +65,21 @@ All notable changes will be documented here.
   product A/B bench's gate runs the same rule over the candidate's diff (the
   task's own test files excluded), so it no longer only re-runs the criteria
   the model already ran green.
+- **`omh update` says what changed for you.** After the new generation is
+  installed, the update prints a short "What changed for you" block: skills
+  added (with what each is for), removed, or given new instructions; skills
+  that now pick up different requests (the trigger phrases gained or lost);
+  and the model chains on this machine whose shipped default moved, shaped by
+  this machine's providers -- or "your own chain for it still applies" where
+  the user overrides that category. The comparison reads only OMH's own
+  records (the managed manifest's per-skill checksums and a new
+  `runtime/update-baseline.json`), so a user's config edits never appear as
+  an OMH change. A first install says there is nothing to compare, and an
+  update that changed nothing prints nothing. The note is kept at
+  `runtime/update-change-note.json`, and `omh_status` returns it as
+  `last_update_change_note`, so asking Hermes "what changed in OMH?" answers
+  from the record; nothing is added to the per-turn context. English by
+  default; `--language` / `OMH_LANG` localize it.
 
 - **The plugin admits a Hermes git checkout by the release it resolves, not
   the install stamp's placeholder.** Released Hermes through 0.21.5 hard-codes

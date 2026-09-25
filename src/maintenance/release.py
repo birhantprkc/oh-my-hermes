@@ -163,7 +163,13 @@ SKILL_INDEX_LINE_CHAR_LIMIT = 100
 # `omh_route_answer`'s `ask_id` field and `omh_jev_ask` provenance wording.
 # Hermes exposes `omh_jev_ask` only where a route resolves (`check_fn`), so a
 # keyless install does not pay its share. Re-derived from the producer.
-PLUGIN_TOOL_SCHEMA_CHAR_LIMIT = 59258
+# 59258 -> 59302: `omh_status` says it also reports what the last `omh update`
+# changed, so "what's new?" reaches the recorded change note through a tool the
+# model already has. The alternative -- a first-turn notice -- would grow the
+# `pre_llm_call` injection that Hermes replays every later turn; 44 schema
+# characters (deferrable under the default tool search) is the cheaper seam.
+# Re-derived from the producer.
+PLUGIN_TOOL_SCHEMA_CHAR_LIMIT = 59302
 # The largest fenced `pre_llm_call` context over the named scenario set in
 # `src/maintenance/per_turn_context.py` (the `all_surfaces` scenario). Hermes
 # replays each turn's injection from `api_content` on every later turn, so this
