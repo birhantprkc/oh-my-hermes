@@ -33,6 +33,25 @@ All notable changes will be documented here.
   owner's held-out English set, before the follow-up that removed
   tuning-probe wording from the predicates, wrong dispatch went 40.4% ->
   25.3% and reach 43.2% -> 62.2%; the reach target of 85% is not met.
+
+- **Every installable skill is checked for routing reach, and a skill the
+  corpora never reach fails CI by name.** `omh demo skill-reach` (operators
+  and agents) projects the two routing-precision corpora per skill on the
+  deciding surface: intervention cases that dispatch to it without an explicit
+  invocation, cases that reach it only when addressed, and negative controls
+  that enter its territory and stay unrouted. `tests/test_skill_reach.py`
+  fails naming each skill with no natural dispatch case or no negative
+  control, unless it is in a shrink-only baseline whose reason is re-measured
+  on every run: `corpus_gap` holds only while one of the skill's own non-name
+  triggers dispatches to it, and `addressed_by_design` (the `/omh` sigil and
+  the Jev skills) only while an addressed case reaches it and no non-name
+  trigger does. A baseline entry for a skill that became reachable fails too.
+  Measured at landing: 130 installable skills, 88 with natural positive reach
+  and 42 without (35 corpus gaps, 7 addressed by design); 113 with a negative
+  control and 17 without. A case where the router asks with the skill first
+  is shown as `shortlist_first_cases` and not counted as reach. No trigger
+  or routing behavior changed.
+
 - **The plugin admits a Hermes git checkout by the release it resolves, not
   the install stamp's placeholder.** Released Hermes through 0.21.5 hard-codes
   `hermes_cli.__version__`; hermes-agent main now serves it from the install

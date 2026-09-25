@@ -128,6 +128,16 @@ does not clear them:
   edit. The failure names the skills whose digests moved, so confirm the list
   is exactly the bodies you meant to touch before re-deriving.
 
+A new skill also needs corpus coverage of its own, which
+`tests/test_skill_reach.py` checks per skill: at least one
+`ROUTING_INTERVENTION_CASES` entry the router dispatches to it without the
+message naming it, and at least one `ROUTING_PRECISION_CASES` entry that uses
+its vocabulary in another sense and stays unrouted. The failure names the
+skill. The two baselines in `src/quality/skill_reach.py` only shrink, so a new
+skill cannot be listed there instead; remove an entry in the same commit that
+adds the case covering it. For operators and agents,
+`omh demo skill-reach --summary` prints the per-skill projection.
+
 ## 4. Regenerate every generated artifact family
 
 ```sh
