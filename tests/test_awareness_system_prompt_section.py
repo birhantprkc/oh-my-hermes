@@ -34,7 +34,9 @@ _HOST_MAX_SECTION_CHARS = 4000
 _HOST_MAX_SECTIONS_TOTAL_CHARS = 8000
 _HOST_HEADING = "## Plugin Context: "
 
-_PLAIN_REQUEST = "migrate the database schema and fix the tests"
+# No OMH vocabulary and no skill candidate line either (`skill_shortlist`), so
+# a section session's turn on it has nothing of its own to inject.
+_PLAIN_REQUEST = "rename the helper function and update its callers"
 _ROUTED_REQUEST = "review this PR for bugs before merge"
 
 

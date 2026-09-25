@@ -120,7 +120,13 @@ CONCEPTUAL_AWARENESS_SURFACES = ("request-to-handoff", "executor selection", "co
 # surface", and the persona belongs to the host's SOUL.md. Re-derived from
 # the producers (1044 and 3316 measured, after the review's carve-out for a
 # user who asks about a term) with standing headroom restored.
-AWARENESS_PRIMER_CONTEXT_CHAR_LIMIT = 1050
+# 1050 -> 1280: one line scoping OMH's own skills to work the user asks for
+# and naming the everyday questions that need none. Measured live (GPT-6
+# Luna, one turn per message, 2026-09-26) an everyday message loaded an OMH
+# skill 39-59% of the time on main; the index lists skills such as
+# `omh-live-info` and `omh-decide` whose words match everyday chat. The
+# compact rail measured 1275 after the line (re-derived from the producer).
+AWARENESS_PRIMER_CONTEXT_CHAR_LIMIT = 1280
 AWARENESS_PRIMER_MARKDOWN_CHAR_LIMIT = 3400
 AWARENESS_WORKFLOW_CONTEXT_CHAR_LIMIT = 1500
 ROLE_CONTEXT_CHAR_LIMIT = 2600
@@ -175,14 +181,23 @@ PLUGIN_TOOL_SCHEMA_CHAR_LIMIT = 59258
 # prompt. The scenarios now measure that host; the primer's own limit above
 # bounds the section, far under the host's 4,000-char per-section cap.
 # Re-derived from the producer.
-PRE_LLM_CALL_CONTEXT_CHAR_LIMIT = 5214
+# 5214 -> 5544: the skill candidate line (`skill_shortlist.py`), up to three
+# skills named with their situations on a turn whose request reads as work.
+# The routed request in `all_surfaces` gets one too (the line stands down only
+# for a workflow the person named), +330. Measured live, the line took the
+# intended-skill load from 78% to 90% (own work set) and 69% to 95% (tuning
+# work set). Re-derived from the producer.
+PRE_LLM_CALL_CONTEXT_CHAR_LIMIT = 5544
 # The same scenario set on the fallback: a session the awareness section did
 # not render for (a restart resume, a legacy id-rotating compaction, a refused
 # section, an older host) still gets the primer in the fenced context, so its
 # largest turn is `all_surfaces_without_section`. Landed at the value the
 # producer measured (6260, the pre-section ceiling), so the fallback cannot
 # grow unseen behind the lower section-host limit above.
-PRE_LLM_CALL_CONTEXT_FALLBACK_CHAR_LIMIT = 6260
+# 6260 -> 6821: the candidate line above (+330) and the primer's scope line
+# (+231 with its join), which rides the fenced context on this fallback.
+# Re-derived from the producer.
+PRE_LLM_CALL_CONTEXT_FALLBACK_CHAR_LIMIT = 6821
 # 340000 -> 349637: three capability-skill sections were added by the domain
 # skill pack (`backend`, `rust`, `native-debugging`), on top of the
 # `llm-app-dev` section that landed on main under the old ceiling. Each section

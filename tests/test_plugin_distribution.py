@@ -854,7 +854,9 @@ print(json.dumps(observed, ensure_ascii=False))
         awareness_module._awareness_context_matches_message_cached.cache_clear()
         awareness_module._awareness_route_hint_cached.cache_clear()
 
-        message = "tell me a short joke about secret-token-123"
+        # No credential words in the message: "secret token" is something the
+        # per-turn skill candidate line answers, and this case is an idle host.
+        message = "tell me a short joke about penguins, zq-4471-marker"
 
         # Case (a): a genuinely idle host with an empty runtime home. Nothing
         # to report, so the hook keeps returning None exactly as today.
@@ -888,7 +890,7 @@ print(json.dumps(observed, ensure_ascii=False))
         self.assertNotIn("[OMH] Native bridge status context.", error_payload["context"])
         serialized = json.dumps(error_payload, sort_keys=True)
         self.assertNotIn("status-boom", serialized)
-        self.assertNotIn("secret-token-123", serialized)
+        self.assertNotIn("zq-4471-marker", serialized)
 
     def test_setup_default_installs_plugin(self) -> None:
         with TemporaryDirectory() as tmp:

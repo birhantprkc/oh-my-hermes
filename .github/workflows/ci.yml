@@ -115,6 +115,9 @@ jobs:
       - name: Generated capability families check
         if: matrix.shard == 0
         run: python -m omh.cli docs capability-families --check
+      - name: Generated skill shortlist index check
+        if: matrix.shard == 0
+        run: python -m omh.cli docs skill-shortlist --check
       - name: Generated ULW README region check
         if: matrix.shard == 0
         run: python -m omh.cli docs ulw-inventory --check

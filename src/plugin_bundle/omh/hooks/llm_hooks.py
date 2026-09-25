@@ -36,6 +36,7 @@ from ..kanban_board_reader import conversation_session_ids, kanban_db_path, read
 from ..omh_roles import extract_role_marker, role_context_payload
 from ..dispatch_outcomes import unacknowledged_outcomes
 from ..runtime_reader import read_omh_activity, read_omh_hud, read_omh_status, read_omh_todo
+from ..skill_shortlist import skill_candidate_line, skill_candidates_for_turn
 from .session_attendance import note_session_platform
 from .nudge_budget import session_is_delegated
 from ..jev_consent import clear_turn as clear_jev_turn
@@ -651,6 +652,21 @@ def pre_llm_call(**kwargs) -> dict[str, object] | None:
             for row in brief.get("degradation", {}).get("components", []):
                 if isinstance(row, dict):
                     degraded.append((str(row.get("component", "")), str(row.get("error_type", ""))))
+
+    # The rule table above names a workflow only when the message says one
+    # of its cue phrases, and measured on a live model it named the intended
+    # skill for 14% of paraphrased work requests. This line names up to three
+    # skills from a lexical ranking of the catalog's own words instead, on
+    # every turn whose request reads as work (`skill_shortlist`). It is not
+    # gated on the route hint above except where the person named the
+    # workflow themselves, and it reads `request_message`, so a host-written
+    # notice gets none.
+    if include_awareness:
+        candidate_line = skill_candidate_line(
+            skill_candidates_for_turn(request_message, route_hint_payload=route_hint_payload)
+        )
+        if candidate_line:
+            context_parts.append(candidate_line)
 
     marker = extract_role_marker(user_message)
     if marker:

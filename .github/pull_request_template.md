@@ -40,6 +40,7 @@ unchecked and explain why under **Not Tested / Not Applicable**.
 - [ ] `uv run python -m omh.cli docs workflows --check`
 - [ ] `uv run python -m omh.cli docs roles --check`
 - [ ] `uv run python -m omh.cli docs capability-families --check`
+- [ ] `uv run python -m omh.cli docs skill-shortlist --check`
 - [ ] `uv run python -m omh.cli harness validate`
 - [ ] `uv run python -m omh.cli release checklist --json`
 - [ ] `uv run python -m omh.cli release hermes-smoke`

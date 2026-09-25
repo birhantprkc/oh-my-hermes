@@ -575,6 +575,7 @@ def budget_metrics() -> tuple[BudgetMetric, ...]:
 def generated_artifacts() -> tuple[GeneratedArtifact, ...]:
     from ..capabilities.families import standalone_capability_families_json
     from ..catalogs.roles import roles_reference_markdown
+    from ..routing.skill_shortlist_sidecar import standalone_skill_shortlist_json
     from ..skills.render import workflow_reference_markdown
 
     return (
@@ -595,6 +596,12 @@ def generated_artifacts() -> tuple[GeneratedArtifact, ...]:
             path="src/plugin_bundle/omh/tools/capability_families.json",
             render=standalone_capability_families_json,
             regenerate="uv run python -m omh.cli docs capability-families",
+        ),
+        GeneratedArtifact(
+            name="skill_shortlist_sidecar",
+            path="src/plugin_bundle/omh/tools/skill_shortlist.json",
+            render=standalone_skill_shortlist_json,
+            regenerate="uv run python -m omh.cli docs skill-shortlist",
         ),
     )
 
