@@ -9,6 +9,7 @@ import sys
 from typing import Any, Mapping
 
 from ..installer import OmhError
+from ..plugin_bundle.omh.cost_receipt import build_cost_receipt
 from ..quality.evidence_records import assess_quality_evidence, build_quality_evidence_package
 from ..quality.working_tree_fingerprint import working_tree_content_fingerprint
 from ..quality.language_diagnostic_evidence import (
@@ -165,6 +166,26 @@ def cmd_quality_evidence_session_usage(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_quality_evidence_cost_receipt(args: argparse.Namespace) -> int:
+    """Print what one conversation's work cost, from records only.
+
+    The same receipt the ``omh_run_summary`` tool hands a chat: the session
+    and its compression continuations, delegated Hermes children, and fanout
+    units stamped with the session. A session Hermes has no row for is an
+    error rather than an empty receipt, so a wrapper never reads "no record"
+    as "cost nothing".
+    """
+    paths = _paths(args)
+    receipt = build_cost_receipt(hermes_home=paths.hermes_home, omh_home=paths.omh_home, session_id=args.session)
+    if receipt.get("status") != "observed":
+        raise OmhError(str(receipt.get("reason") or "no cost receipt"))
+    if _wants_json(args):
+        _print_json(receipt)
+    else:
+        print(receipt["text"])
+    return 0
+
+
 def _reply_lint_input(args: argparse.Namespace) -> tuple[dict[str, Any], list[dict[str, Any]]]:
     if args.hermes_session:
         paths = _paths(args)
@@ -311,6 +332,20 @@ def _add_quality_evidence_commands(sub: argparse._SubParsersAction[argparse.Argu
     )
     usage.add_argument("--json", action="store_true", help="Print the machine-readable session_usage/v1 payload.")
     usage.set_defaults(func=cmd_quality_evidence_session_usage)
+
+    receipt = commands.add_parser(
+        "cost-receipt",
+        help="Print what one Hermes conversation's work cost, from recorded usage only.",
+        description=(
+            "Sum the recorded spend of a Hermes conversation: its session rows, delegated Hermes "
+            "children, and fanout units that recorded the session as their origin. Observed cost, "
+            "usage with no recorded price, and records with no usage are reported apart; nothing "
+            "is estimated. Reads state.db (mode=ro) and dispatch summaries; metadata only."
+        ),
+    )
+    receipt.add_argument("--session", required=True, help="Any Hermes session id of the conversation.")
+    receipt.add_argument("--json", action="store_true", help="Print the machine-readable omh_cost_receipt/v1 payload.")
+    receipt.set_defaults(func=cmd_quality_evidence_cost_receipt)
 
 
 def _add_json_input(parser: argparse.ArgumentParser, name: str, label: str) -> None:

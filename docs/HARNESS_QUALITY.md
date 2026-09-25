@@ -313,6 +313,44 @@ not show that the model consumed them, that a call succeeded, that a skill's
 guidance was followed, or that a reply was correct, and it is not execution,
 review, CI, or merge evidence.
 
+## Cost Receipt
+
+Audience: people ask in chat; agents and operators read the tool payload or
+the CLI.
+
+A person asks "how much did this task cost?" in a Hermes chat. The model calls
+`omh_run_summary`, whose payload carries a `cost_receipt`
+(`omh_cost_receipt/v1`), and relays `cost_receipt.text`. "This task" is the
+calling conversation, and the receipt sums what that work recorded:
+
+| Source | What links it to the conversation |
+| --- | --- |
+| Hermes session | the session plus its compression continuations, the identity set the HUD already owns delegate children with |
+| Delegated Hermes children | every session Hermes marks with `model_config._delegate_from` below the conversation, walked recursively the way Hermes' own cascade walks them |
+| Fanout units | `origin_session_id` on the unit in `dispatch_summary.json`, stamped by `omh coding fanout dispatch` from the `HERMES_SESSION_ID` Hermes injects into terminal commands; the same stamp on the summary covers that run's recovery attempts |
+
+The receipt keeps three numbers apart. Observed cost is only what a record
+priced: a Hermes usage row with a cost status other than `unknown` (the
+`included` status is a vouched `$0`), or a cost an executor CLI reported for
+its unit. Usage with no recorded price is reported as tokens, with the models
+named, and is never added to the dollar figure or priced from OMH's own
+ballpark table. A delegated child or fanout unit that ran and recorded no
+usage is listed as missing, not counted as zero. Every receipt also says what
+it does not cover: fanout runs dispatched outside a Hermes session or before
+the stamp existed, standalone `omh hermes-child dispatch` runs, Hermes kanban
+workers, and earlier attempts of a re-dispatched unit (the dispatch summary
+keeps the latest).
+
+```sh
+omh quality-evidence cost-receipt --session <any session id of the conversation> [--json]
+```
+
+The CLI prints the same plain text by default and exits 2 when Hermes has no
+row for the session, so "no record" is never read as "cost nothing". Both
+surfaces open `state.db` with `mode=ro` and read ids, models, counts and
+amounts only; no prompt, reply or transcript text is read. The receipt is not
+a provider invoice.
+
 ## Declared Verdicts
 
 `verification-gate` issues `claim_verdict/v1` as PASS, HOLD or BLOCK,

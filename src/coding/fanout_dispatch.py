@@ -551,6 +551,19 @@ class _SpawnStagger:
 # hand, which is the same trust boundary every other env tunable has.
 FANOUT_DEPTH_ENV_VAR = "OMH_FANOUT_DEPTH"
 FANOUT_LINEAGE_ENV_VAR = "OMH_FANOUT_LINEAGE"
+# Hermes injects the spawning conversation's session-db id into every terminal
+# command's environment (`tools/environments/local._inject_session_context_env`,
+# the same value `processes.json` records as `parent_session_id`). Recorded on
+# the units a dispatch ran so a cost receipt can attribute them to that
+# conversation from a field, never from timing.
+HERMES_SESSION_ID_ENV_VAR = "HERMES_SESSION_ID"
+_ORIGIN_SESSION_ID_RE = re.compile(r"[A-Za-z0-9_.:@-]{1,160}")
+
+
+def hermes_origin_session_id(environ: Mapping[str, str] | None = None) -> str:
+    """The originating Hermes session id, or "" when absent or not id-shaped."""
+    value = str((os.environ if environ is None else environ).get(HERMES_SESSION_ID_ENV_VAR, "") or "").strip()
+    return value if _ORIGIN_SESSION_ID_RE.fullmatch(value) else ""
 # A lineage chain is metadata on a refusal, not a queue: bound it so a
 # pathological nesting cannot grow the child environment without limit.
 _MAX_LINEAGE_CHARS = 512
@@ -2550,6 +2563,11 @@ def dispatch_fanout(
             # summary answers "why did this run again" without the reader
             # having to join it back against the plan.
             entry["resume"] = _resume_note(decision)
+    origin_session_id = hermes_origin_session_id()
+    if origin_session_id:
+        for entry in summary_units:
+            if entry.get("status") not in _DISPATCH_SKIP_STATUSES:
+                entry["origin_session_id"] = origin_session_id
     _apply_integration_readiness(summary_units)
     summary = {
         "schema_version": FANOUT_DISPATCH_SCHEMA_VERSION,
@@ -2601,6 +2619,10 @@ def dispatch_fanout(
         "spawns_claimed": spawn_ledger.claimed,
         "claim_boundary": FANOUT_SPAWN_GUARD_CLAIM_BOUNDARY,
     }
+    if origin_session_id:
+        # Covers this invocation's recovery attempts, which live on the
+        # summary rather than on a unit row.
+        summary["origin_session_id"] = origin_session_id
     if failure_recovery is not None:
         summary["failure_recovery"] = failure_recovery
     if resume_plan is not None:

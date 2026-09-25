@@ -395,6 +395,19 @@ result's usage as complete (the child was killed, deltas still in Hermes'
 daemon token-writer queue are lost, and the read is a lower bound with no
 marker of its own)
 
+**Originating session stamp**:
+`origin_session_id` on a fanout unit (and on the dispatch summary, for that
+run's recovery attempts), copied by `omh coding fanout dispatch` from the
+`HERMES_SESSION_ID` Hermes injects into every terminal command's environment
+(`tools/environments/local._inject_session_context_env`) — the session-db id
+of the spawning conversation, the same value `processes.json` records as
+`parent_session_id`. It is the only link from a fanout unit to the
+conversation that asked for it, and the cost receipt reads nothing else to
+attribute a unit.
+_Avoid_: attributing a unit by timing or by todo text, stamping a value that
+is not id-shaped, reading an absent stamp as "belongs to no one" rather than
+"not attributable"
+
 ### Fault domains
 
 **OMH install fault**:
