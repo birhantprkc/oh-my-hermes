@@ -13679,7 +13679,7 @@ Latest runtime run: 20260625T090917585910Z-loop-goal-loop-8b5bec.
 
             self.assertEqual(run_cli(["--omh-home", str(omh_home), "convert", "--from-skills-dir", str(root / "local-skills")])[0], 0)
             converted = (omh_home / "skills" / "ultrawork" / "ulw-loop" / "SKILL.md").read_text(encoding="utf-8")
-            self.assertIn("description: [omh] Ambitious goal needing many iterative cycles", converted)
+            self.assertIn("description: [omh] Ambitious project goal needing many build cycles", converted)
             self.assertIn("Hermes Compatibility Contract", converted)
 
     def test_mocked_source_install_update(self) -> None:

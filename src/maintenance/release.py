@@ -197,7 +197,9 @@ PLUGIN_TOOL_SCHEMA_CHAR_LIMIT = 59258
 # its own skills dirs and a prefixed load of an OMH skill returns "not
 # found" (+103). The line is now about 430-580 characters on a turn that
 # carries it. Re-derived from the producer.
-PRE_LLM_CALL_CONTEXT_CHAR_LIMIT = 5647
+# 5647 -> 5662: the work-context skill openings reach the route hint's
+# context card (+15 on the routed request). Re-derived from the producer.
+PRE_LLM_CALL_CONTEXT_CHAR_LIMIT = 5662
 # The same scenario set on the fallback: a session the awareness section did
 # not render for (a restart resume, a legacy id-rotating compaction, a refused
 # section, an older host) still gets the primer in the fenced context, so its
@@ -209,7 +211,9 @@ PRE_LLM_CALL_CONTEXT_CHAR_LIMIT = 5647
 # Re-derived from the producer.
 # 6799 -> 6902: the same exact-call-form wording (+103). Re-derived from the
 # producer.
-PRE_LLM_CALL_CONTEXT_FALLBACK_CHAR_LIMIT = 6902
+# 6902 -> 6917: the same +15 from the work-context openings. Re-derived
+# from the producer.
+PRE_LLM_CALL_CONTEXT_FALLBACK_CHAR_LIMIT = 6917
 # 340000 -> 349637: three capability-skill sections were added by the domain
 # skill pack (`backend`, `rust`, `native-debugging`), on top of the
 # `llm-app-dev` section that landed on main under the old ceiling. Each section
@@ -463,7 +467,12 @@ PRE_LLM_CALL_CONTEXT_FALLBACK_CHAR_LIMIT = 6902
 # drop words the negative-control corpus uses (margins back to main's) and
 # to say what the user wants; net +30 across those rows. Re-derived from the
 # producer.
-FULL_CAPABILITY_SKILL_SECTION_CHAR_LIMIT = 441476
+# 441476 -> 441693: 26 situation openings now name the work context inside
+# the visible index window ("Company hiring or HR process to structure",
+# "Upcoming work meeting that lacks an agenda") because a live model loaded
+# them for private-life chat (a weekend plan, a personal budget, a book club);
+# net +217 across those capability rows. Re-derived from the producer.
+FULL_CAPABILITY_SKILL_SECTION_CHAR_LIMIT = 441693
 FULL_CAPABILITY_SKILL_ITEM_CHAR_LIMIT = 9000
 # 100000 -> 102070: the same three domain workflows each add one standalone
 # capability row, again measured on the merged tree; warranted growth for three

@@ -335,7 +335,7 @@ _DEFINITIONS = [
     ),
     SkillDefinition(
         "loop",
-        "Ambitious goal needing many iterative cycles: agentic interviewer -> planner -> researcher -> builder -> reviewer cycles until a real gate.",
+        "Ambitious project goal needing many build cycles: agentic interviewer -> planner -> researcher -> builder -> reviewer cycles until a real gate.",
         (
             "loop",
             "./loop",
@@ -717,7 +717,7 @@ _DEFINITIONS = [
     ),
     SkillDefinition(
         "jit-learn",
-        "Blocked and choosing a learning target: just-in-time learning workflow: select and confirm an immediate learning target, research credible sources, and prepare an application-first brief without popularity ranking.",
+        "Blocked on a project by a knowledge gap: just-in-time learning workflow: select and confirm an immediate learning target, research credible sources, and prepare an application-first brief without popularity ranking.",
         (
             "jit-learn",
             "learn next",
@@ -1405,7 +1405,7 @@ _DEFINITIONS = [
     ),
     SkillDefinition(
         "web-research",
-        "Current-facts lookup on the web: web lookup lane - settle a current-facts question in one cited retrieval round with retrieval dates and source-quality notes; for pre-spec grounding across reference implementations use `research`.",
+        "Current technical or business fact to cite from web: web lookup lane - settle a current-facts question in one cited retrieval round with retrieval dates and source-quality notes; for pre-spec grounding across reference implementations use `research`.",
         (
             # The lookup half of the pre-split `research` trigger list. Every
             # phrase here names retrieval or citation; the phrases naming depth,
@@ -1730,7 +1730,7 @@ _DEFINITIONS = [
     ),
     SkillDefinition(
         "research-brief",
-        "Market, competitor, or pricing question: business research brief - turns a market, competitor, pricing, or customer question into a structured evidence-vs-inference brief; for raw link gathering use ulw-research, and for ongoing multi-role research use research-department.",
+        "Business question on market, competitors, pricing: business research brief - turns a market, competitor, pricing, or customer question into a structured evidence-vs-inference brief; for raw link gathering use ulw-research, and for ongoing multi-role research use research-department.",
         (
             "research-brief",
             "business-research",
@@ -1992,9 +1992,11 @@ _DEFINITIONS = [
     ),
     SkillDefinition(
         "strategy-brief",
-        # Installed label is `omh-decide`; the description must lead with the
-        # word the label promises or the picker sees a self-contradiction.
-        "Decide between options: tradeoffs, a recommendation, and a decision note you can act on.",
+        # Installed label is `omh-decide`; the opening names the decision the
+        # label promises, and names it as a team or business one because a
+        # live model loaded this skill for private choices ("camping or stay
+        # home this weekend") when the opening read as any decision.
+        "Team or business decision between options: tradeoffs, a recommendation, and a decision note you can act on.",
         (
             "strategy-brief",
             "strategy brief",
@@ -2053,7 +2055,7 @@ _DEFINITIONS = [
     ),
     SkillDefinition(
         "meeting-brief",
-        "Upcoming meeting that lacks an agenda: agenda, prompts, decisions, and record template.",
+        "Upcoming work meeting that lacks an agenda: agenda, prompts, decisions, and record template.",
         (
             "meeting-brief",
             "meeting brief",
@@ -2180,7 +2182,7 @@ _DEFINITIONS = [
     ),
     SkillDefinition(
         "finance-analysis",
-        "Budget overruns, cash risk, or close issues: turn finance and accounting inputs into a decision-ready variance, cash, and close-risk brief.",
+        "Company budget overrun, cash risk, or close issue: turn finance and accounting inputs into a decision-ready variance, cash, and close-risk brief.",
         SPECIALIST_DOMAIN_TRIGGERS["finance-analysis"],
         "Use when supplied ledger, budget, forecast, revenue, expense, cash-flow, or close context needs a bounded analysis and decision brief.",
         category="operations",
@@ -2314,7 +2316,7 @@ _DEFINITIONS = [
     ),
     SkillDefinition(
         "people-ops",
-        "Hiring or people-process decisions: turn hiring and people context into a fair, structured recruiting or people-operations brief.",
+        "Company hiring or HR process to structure: turn hiring and people context into a fair, structured recruiting or people-operations brief.",
         SPECIALIST_DOMAIN_TRIGGERS["people-ops"],
         "Use when a team needs a role brief, hiring plan, interview rubric, candidate-debrief structure, onboarding outline, or people-process decision support.",
         category="operations",
@@ -2377,7 +2379,7 @@ _DEFINITIONS = [
     ),
     SkillDefinition(
         "legal-compliance-review",
-        "Contract, NDA, or policy with legal exposure: surface contract and compliance risks, questions, and escalation points before a legal decision or action.",
+        "Business contract, NDA, or policy with legal risk: surface contract and compliance risks, questions, and escalation points before a legal decision or action.",
         # The domain table doubles as this skill's +54 route cue, so only
         # phrases unambiguous on their own belong in it. The bare markup words
         # are not: `redline` as a cue claimed "the engine is running at the
@@ -2539,7 +2541,7 @@ _DEFINITIONS = [
     ),
     SkillDefinition(
         "support-operations",
-        "Customer support case needs a reply or escalation: turn a support case into a clear customer reply, severity path, and owned next step.",
+        "Support ticket your team must answer or escalate: turn a support case into a clear customer reply, severity path, and owned next step.",
         SPECIALIST_DOMAIN_TRIGGERS["support-operations"],
         "Use when one or a bounded set of support contacts needs response drafting, urgency classification, incident/escalation routing, and follow-up ownership.",
         category="triage",
@@ -2603,7 +2605,7 @@ _DEFINITIONS = [
     ),
     SkillDefinition(
         "curriculum-design",
-        "Teaching goal that needs a course or syllabus: turn a learning goal into a teachable curriculum, assessment plan, and learner-ready sequence.",
+        "Team training or course that needs a syllabus: turn a learning goal into a teachable curriculum, assessment plan, and learner-ready sequence.",
         SPECIALIST_DOMAIN_TRIGGERS["curriculum-design"],
         "Use when an educator or enablement owner needs outcomes, scope and sequence, lesson/module design, assessment criteria, and differentiation assumptions.",
         category="planning",
@@ -3034,7 +3036,7 @@ _DEFINITIONS = [
     ),
     SkillDefinition(
         "operating-rhythm",
-        "Keeping minutes, retros, and decision history: meeting minutes, scrum/sprint records, retros, decisions, and follow-up history.",
+        "Team minutes, retros, and decision history to keep: meeting minutes, scrum/sprint records, retros, decisions, and follow-up history.",
         (
             "operating-rhythm",
             "operating rhythm",
@@ -3250,7 +3252,7 @@ _DEFINITIONS = [
     ),
     SkillDefinition(
         "img-summary",
-        "Image card or infographic of content: image prompt cards - turn meetings, reports, PRs, issues, research, and releases into domain-aware image prompt cards.",
+        "Infographic card for a report, PR, or release: image prompt cards - turn meetings, reports, PRs, issues, research, and releases into domain-aware image prompt cards.",
         (
             "img-summary",
             "img summary",
@@ -3515,7 +3517,7 @@ _DEFINITIONS = [
     ),
     SkillDefinition(
         "design-orchestration",
-        "Entire design problem to delegate: prepare a bounded design direction, existing-lane composition, and executor-neutral handoff.",
+        "Entire product design problem to delegate: prepare a bounded design direction, existing-lane composition, and executor-neutral handoff.",
         (
             "design-orchestration",
             "design orchestration",
@@ -5834,7 +5836,7 @@ _DEFINITIONS = [
     ),
     SkillDefinition(
         "automation-blueprint",
-        "Recurring scheduled job or reminder: design recurring Hermes operations with schedule, delivery, silence policy, context chain, and prepared-vs-observed status.",
+        "Recurring Hermes job on a schedule (cron, digests): design recurring Hermes operations with schedule, delivery, silence policy, context chain, and prepared-vs-observed status.",
         (
             "automation-blueprint",
             "scheduled ops",
@@ -6327,7 +6329,7 @@ _DEFINITIONS = [
     ),
     SkillDefinition(
         "plan",
-        "Unplanned feature or bugfix: structured planning before execution.",
+        "Software feature or bugfix not yet planned: structured planning before execution.",
         (
             "plan",
             "$plan",
@@ -6376,7 +6378,7 @@ _DEFINITIONS = [
     ),
     SkillDefinition(
         "ralplan",
-        "High-stakes proposal needing approval: consensus planning with review gates.",
+        "High-stakes technical proposal needing approval: consensus planning with review gates.",
         (
             "ralplan",
             "$ralplan",
@@ -6474,7 +6476,7 @@ _DEFINITIONS = [
     ),
     SkillDefinition(
         "adversarial-consensus",
-        "Proposal facing adversarial scrutiny: independent perspectives attack a proposal, then distill into a bundle a separate planner consumes.",
+        "Technical proposal facing adversarial scrutiny: independent perspectives attack a proposal, then distill into a bundle a separate planner consumes.",
         (
             "adversarial-consensus",
             "$adversarial-consensus",
@@ -7226,7 +7228,7 @@ _DEFINITIONS = [
     ),
     SkillDefinition(
         "ultraperf",
-        "Unexplained slowness, leaks, or cost spikes: find where a system is actually slow, leaking, or expensive across runtime, memory, token cost, storage, rendering, inference, CI, and query domains, then fix one measured hot path at a time behind a regression budget.",
+        "Software slowness, memory leaks, or cost spikes: find where a system is actually slow, leaking, or expensive across runtime, memory, token cost, storage, rendering, inference, CI, and query domains, then fix one measured hot path at a time behind a regression budget.",
         (
             "ultraperf",
             "$ultraperf",

@@ -132,7 +132,7 @@ _FEATURE_SURFACE_SKILLS = (
     ),
     _feature_surface_skill(
         "memory-new",
-        "Remember a fact for future sessions: capture one bounded durable project or product memory candidate through explicit remember, refuse, or defer review; for existing Hermes memory use omh-memory-sync, and for a past decision use decision-recall.",
+        "Project fact to remember across future sessions: capture one bounded durable project or product memory candidate through explicit remember, refuse, or defer review; for existing Hermes memory use omh-memory-sync, and for a past decision use decision-recall.",
         (
             "memory-new",
             "new memory",
@@ -348,7 +348,7 @@ _FEATURE_SURFACE_SKILLS = (
     ),
     _feature_surface_skill(
         "voice-operator",
-        "Short spoken or mobile-style request: terse voice and mobile-style requests - turn short spoken-style asks into clarify, plan, status, handoff, or confirmation actions.",
+        "Dictated voice note about project work or status: terse voice and mobile-style requests - turn short spoken-style asks into clarify, plan, status, handoff, or confirmation actions.",
         (
             "voice-operator",
             "voice operator",
@@ -702,7 +702,7 @@ _FEATURE_SURFACE_SKILLS = (
     ),
     _feature_surface_skill(
         "live-info-operator",
-        "Weather, exchange-rate, or sports lookups: policy overlay for live lookups - add provider, freshness, units, and source-quality gates after preferring native live-data tools for ordinary weather, finance, sports, maps, and time-zone requests.",
+        "Live rates or scores a task must cite with sources: policy overlay for live lookups - add provider, freshness, units, and source-quality gates after preferring native live-data tools for ordinary weather, finance, sports, maps, and time-zone requests.",
         (
             "live-info-operator",
             "live info operator",
@@ -1032,7 +1032,7 @@ _FEATURE_SURFACE_SKILLS = (
     ),
     _feature_surface_skill(
         "physical-device-readiness",
-        "Controlling a printer, robot, or IoT device: gate robots, 3D printers, IoT relays, sensors, and lab hardware before trials; use external-connector-readiness for provider or connector adoption and toolbelt-readiness for missing control tools.",
+        "Agent control of a robot, 3D printer, or IoT relay: gate robots, 3D printers, IoT relays, sensors, and lab hardware before trials; use external-connector-readiness for provider or connector adoption and toolbelt-readiness for missing control tools.",
         (
             "physical-device-readiness",
             "physical device readiness",
@@ -1105,7 +1105,7 @@ _FEATURE_SURFACE_SKILLS = (
     ),
     _feature_surface_skill(
         "content-operator",
-        "Writing or rewriting text for an audience: scope publish-ready writing, rewriting, summarization, translation, release-note, newsletter, customer-copy, social-copy, README-copy, and email-draft work with audience, tone, style, source, review, and hallucination gates.",
+        "Product or company copy to publish or rewrite: scope publish-ready writing, rewriting, summarization, translation, release-note, newsletter, customer-copy, social-copy, README-copy, and email-draft work with audience, tone, style, source, review, and hallucination gates.",
         (
             "content-operator",
             "content operator",
@@ -1526,7 +1526,7 @@ _FEATURE_SURFACE_SKILLS = (
     ),
     _feature_surface_skill(
         "achievements",
-        "Unlocked badges and achievement progress: achievements observation: summarize hermes-achievements badges, tiers, recent unlocks, and progress from local plugin artifacts.",
+        "Hermes badges unlocked and achievement progress: achievements observation: summarize hermes-achievements badges, tiers, recent unlocks, and progress from local plugin artifacts.",
         (
             "achievements",
             "achievement",

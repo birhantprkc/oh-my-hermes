@@ -71,6 +71,19 @@ All notable changes will be documented here.
   phrases per skill in the words a user would use; the lexical shortlist
   reads it and nothing scores or renders it. Routing results on both
   precision corpora are unchanged.
+- **Skill openings name the work context a model needs to tell them from
+  private life.** Many situation openings also described private life: a
+  weekend plan, a personal budget, a performance review, a book club
+  meeting. A live model loaded them for everyday chat. 26 openings now put
+  the work context inside the visible window, for example "Company hiring or
+  HR process to structure", "Upcoming work meeting that lacks an agenda" and
+  "Support ticket your team must answer or escalate". On a 120-message
+  everyday-chat set (GPT-6 Luna, one Hermes turn each, two runs per side),
+  the share that loaded an OMH skill fell from 69% to 44%. That is still far
+  above the 10% target. `omh-live-info` alone accounts for about 19 of
+  those loads, whatever its opening says. On a 130-request work set the
+  intended skill loaded in 67.0% of runs, against 70.8% on main.
+  Routing results on both precision corpora are unchanged.
 - **The plugin bundle passes `hermes plugins validate`, and a plugin Hermes
   installed is left to Hermes.** The Hermes install scanner read the dict-key
   constant `PRIVATE_TOKEN = "__omh_egress_attempt_token"` as a hardcoded
