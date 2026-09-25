@@ -36,7 +36,7 @@ from ..kanban_board_reader import conversation_session_ids, kanban_db_path, read
 from ..omh_roles import extract_role_marker, role_context_payload
 from ..dispatch_outcomes import unacknowledged_outcomes
 from ..runtime_reader import read_omh_activity, read_omh_hud, read_omh_status, read_omh_todo
-from ..skill_shortlist import skill_candidate_line, skill_candidates_for_turn
+from ..skill_shortlist import claim_candidate_line, skill_candidate_line, skill_candidates_for_turn
 from .session_attendance import note_session_platform
 from .nudge_budget import session_is_delegated
 from ..jev_consent import clear_turn as clear_jev_turn
@@ -660,13 +660,12 @@ def pre_llm_call(**kwargs) -> dict[str, object] | None:
     # every turn whose request reads as work (`skill_shortlist`). It is not
     # gated on the route hint above except where the person named the
     # workflow themselves, and it reads `request_message`, so a host-written
-    # notice gets none.
+    # notice gets none. A session is shown a given candidate set once; the
+    # line comes back only when the set changes.
     if include_awareness:
-        candidate_line = skill_candidate_line(
-            skill_candidates_for_turn(request_message, route_hint_payload=route_hint_payload)
-        )
-        if candidate_line:
-            context_parts.append(candidate_line)
+        candidates = skill_candidates_for_turn(request_message, route_hint_payload=route_hint_payload)
+        if claim_candidate_line(session_id, candidates):
+            context_parts.append(skill_candidate_line(candidates))
 
     marker = extract_role_marker(user_message)
     if marker:

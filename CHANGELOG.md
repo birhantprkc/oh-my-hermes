@@ -4,6 +4,23 @@ All notable changes will be documented here.
 
 ## Unreleased
 
+- **Hermes turns name the skills a work request may fit.** On a turn whose
+  request reads as work, the plugin adds one line naming up to three
+  installed skills with the situation each serves, and the model may load
+  one with `skill_view`. The candidates come from the same BM25 ranking the
+  router's shortlist uses, shipped to the plugin as a generated index
+  (`omh docs skill-shortlist`, checked byte-for-byte). The line needs a
+  catalog-rare word from a skill's own situations or triggers, and stays
+  away from greetings, factual questions, jokes, recommendations, personal
+  advice, a workflow the person named, and messages with no ASCII words. A
+  session sees the same candidate set once. The awareness primer also says
+  which requests OMH skills are for. Measured on a live model (GPT-6 Luna,
+  one Hermes turn per message, one run per arm), the intended skill loaded
+  for 90% of a 150-request work set (78% on main). The everyday target was
+  missed: 32.5% of an 80-message everyday set still loaded an OMH skill
+  (38.8% on main), against a 10% target. Most of those loads had no
+  candidate line; the model picked the skill from the host's skill index.
+  Requests written without ASCII words get no line.
 - **Shortlist first: the router dispatches only on strong evidence and
   otherwise hands Hermes the shortlist.** A confident score dispatches only
   on an explicit or named invocation, the winner's own trigger phrase (unless

@@ -15,19 +15,28 @@ repeats `omh.routing.localization.routing_terms` and
 word list comes from the sidecar. `tests/test_skill_shortlist_sidecar.py` holds the two rankings
 equal. A missing or unreadable sidecar ranks nothing, so the turn gets no line.
 
+Only ASCII letter-and-digit words are ranked; every other token is dropped.
+A message written wholly in another script therefore gets no line, while a
+mixed message (Korean with English product words, say) is ranked on its
+ASCII words and can get one.
+
 What reaches the model is one line of candidates, and only when the request
 reads as work: see `skill_candidates_for_turn`. The line names skills the
-model may load; it selects nothing and loads nothing.
+model may load; it selects nothing and loads nothing. It is shown once per
+session per candidate set (`claim_candidate_line`).
 """
 
 from __future__ import annotations
 
+from collections import OrderedDict
 from dataclasses import dataclass
 from functools import lru_cache
+import hashlib
 import json
 import math
 from pathlib import Path
 import re
+import threading
 import unicodedata
 
 from .reference_regions import executable_routing_text
@@ -83,6 +92,27 @@ _FACTUAL_OPENERS = (
 )
 _FACTUAL_MAX_WORDS = 14
 _SENTENCE_BREAK_RE = re.compile(r"[.!?\n]\s+\S")
+# Conversational requests, wherever they sit in the message: entertainment
+# (a joke, a poem, a story, a movie or book to recommend) and asking for
+# personal advice or support. Each is a kind of request, not a topic word, so
+# "a joke about secret tokens" and "a movie about hackers and security" stay
+# conversation even though their topic words reach a skill.
+_CONVERSATIONAL_REQUEST_RE = re.compile(
+    r"\b(?:jokes?|poems?|haikus?|riddles?|limericks?)\b"
+    r"|\b(?:tell|write) me a (?:\w+ )?story\b"
+    r"|\brecommend (?:me )?(?:a |an |some )?(?:\w+ ){0,2}"
+    r"(?:movies?|films?|books?|novels?|songs?|albums?|podcasts?|shows?|tv series|games?|restaurants?)\b"
+    r"|\bany advice\b"
+    r"|\bi(?:'m| am)? feel(?:ing)? (?:so |really |a bit |kind of )?"
+    r"(?:stressed|sad|lonely|anxious|tired|down|nervous|overwhelmed|bored|happy|burned out|burnt out)\b"
+    r"|\bhow do i feel\b"
+)
+
+# Skills the line never names. `jev-*` skills send data off the machine and
+# are reached only by naming Jev; `maestro` (`ulw-maestro`) is the lane for a
+# coding owner the person already chose, never a suggestion.
+_NEVER_LISTED_PREFIX = "jev-"
+_NEVER_LISTED = frozenset({"maestro"})
 
 # The route hint's id for a message that names its workflow. The person chose;
 # a list of alternatives would argue with them.
@@ -111,6 +141,10 @@ class _Index:
     stem_exceptions: frozenset[str]
 
 
+# Cached, `None` included: a sidecar that is missing, unreadable, of another
+# schema version, or malformed ranks nothing until the process restarts. The
+# file ships inside the bundle, so the only repair is a new bundle, and an
+# `omh update` comes with the Hermes restart that clears this cache.
 @lru_cache(maxsize=1)
 def _index() -> _Index | None:
     try:
@@ -238,10 +272,12 @@ def lexical_ranking(message: str) -> tuple[tuple[str, float], ...]:
 
 
 def _conversational(message: str) -> bool:
-    """A greeting, a thanks, or a one-sentence factual question."""
+    """A greeting, a thanks, a conversational request, or a one-sentence factual question."""
     if len(set(lexical_terms(message))) < _MIN_CONTENT_TERMS:
         return True
-    text = " ".join(_fold(message).split())
+    text = " ".join(_fold(message).replace("\u2019", "'").split())
+    if _CONVERSATIONAL_REQUEST_RE.search(text):
+        return True
     return (
         text.startswith(_FACTUAL_OPENERS)
         and not _SENTENCE_BREAK_RE.search(text)
@@ -259,12 +295,16 @@ def skill_candidates(message: str) -> tuple[tuple[str, str], ...]:
     shortlist floor. One anchor is not enough on its own unless the score is
     high: everyday English shares single words with the catalog constantly.
     Listed are the ranked skills that clear the floor with an anchor of their
-    own; `jev-*` skills never, since they send data off the machine.
+    own; never a `jev-*` skill or `ulw-maestro` (`_NEVER_LISTED`).
     """
     index = _index()
     if index is None:
         return ()
-    ranking = [(name, score) for name, score in lexical_ranking(message) if not name.startswith("jev-")]
+    ranking = [
+        (name, score)
+        for name, score in lexical_ranking(message)
+        if not name.startswith(_NEVER_LISTED_PREFIX) and name not in _NEVER_LISTED
+    ]
     if not ranking:
         return ()
     by_name = {skill.name: skill for skill in index.skills}
@@ -297,7 +337,8 @@ def skill_candidates_for_turn(
     """The candidates this turn's line names, or none.
 
     None for a message that names its own workflow (the route hint's direct
-    invocation), and none for small talk or a direct factual question.
+    invocation), and none for small talk, a conversational request, or a
+    direct factual question.
     """
     if not message.strip():
         return ()
@@ -310,6 +351,38 @@ def skill_candidates_for_turn(
     if _conversational(text):
         return ()
     return skill_candidates(text)
+
+
+# The last candidate set each session was shown, so a run of work turns that
+# rank the same skills carries the line once. Process-local, the way the
+# board card remembers its one-shot line (`hooks/llm_hooks.py`): the awareness
+# ledger keeps one route slot per session, and that slot is the route hint's.
+# A Hermes restart forgets it and the next matching turn shows the line again.
+_MAX_REMEMBERED_SESSIONS = 256
+_shown_lock = threading.Lock()
+_shown_by_session: "OrderedDict[str, str]" = OrderedDict()
+
+
+def claim_candidate_line(session_id: str, candidates: tuple[tuple[str, str], ...]) -> bool:
+    """True when this session has not been shown exactly this candidate set last."""
+    if not candidates:
+        return False
+    if not session_id:
+        return True
+    fingerprint = hashlib.sha256("\n".join(label for label, _ in candidates).encode("utf-8")).hexdigest()
+    with _shown_lock:
+        if _shown_by_session.get(session_id) == fingerprint:
+            return False
+        _shown_by_session[session_id] = fingerprint
+        _shown_by_session.move_to_end(session_id)
+        while len(_shown_by_session) > _MAX_REMEMBERED_SESSIONS:
+            _shown_by_session.popitem(last=False)
+    return True
+
+
+def reset_candidate_line_state() -> None:
+    with _shown_lock:
+        _shown_by_session.clear()
 
 
 def skill_candidate_line(candidates: tuple[tuple[str, str], ...]) -> str:
@@ -329,6 +402,8 @@ __all__ = [
     "ADMISSION_MIN_ANCHORS",
     "ADMISSION_SINGLE_ANCHOR_SCORE",
     "MAX_CANDIDATES",
+    "claim_candidate_line",
+    "reset_candidate_line_state",
     "lexical_ranking",
     "lexical_terms",
     "skill_candidate_line",

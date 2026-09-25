@@ -6513,12 +6513,11 @@ def awareness_primer_context() -> str:
             # message ("plan my weekend", "is it going to rain") loaded an OMH
             # skill 39-59% of the time, mostly `omh-live-info` and
             # `omh-decide`: the skill index matches the words, not whether the
-            # person is asking for work. Naming the everyday topics measured
-            # better than the abstract sentence alone (2026-09-26).
+            # person is asking for work.
             (
                 "OMH skills are for work the user asks for: code, projects, and team or business tasks. "
                 "Everyday questions -- weather, prices, travel, food, health, shopping, personal choices, "
-                "small talk -- need no OMH skill; answer them directly."
+                "small talk -- need no OMH skill."
             ),
             # Collision rule, previously reachable only inside the omh-routing
             # skill body — a document the model must have already chosen to

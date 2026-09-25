@@ -145,7 +145,11 @@ def _run_pre_llm_call(
     # `section` is whether the host rendered the awareness system prompt
     # section for this session, as every admitted host does; without it the
     # primer rides the fenced context, as on a host that lacks the API.
+    from ..plugin_bundle.omh.skill_shortlist import reset_candidate_line_state
+
     llm_hooks._reset_awareness_section_state()
+    # Every scenario runs under one session id; each measures a fresh session.
+    reset_candidate_line_state()
     try:
         with tempfile.TemporaryDirectory() as tmp:
             omh_home = Path(tmp) / "omh"

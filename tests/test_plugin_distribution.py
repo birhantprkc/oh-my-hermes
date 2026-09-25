@@ -651,6 +651,11 @@ class PluginDistributionTests(unittest.TestCase):
             "capability_families.json",
             pyproject["tool"]["setuptools"]["package-data"]["omh.plugin_bundle.omh.tools"],
         )
+        self.assertTrue(root.joinpath("tools", "skill_shortlist.json").is_file())
+        self.assertIn(
+            "skill_shortlist.json",
+            pyproject["tool"]["setuptools"]["package-data"]["omh.plugin_bundle.omh.tools"],
+        )
         # The Hermes Desktop half. `dashboard` is a declared package so
         # `plugin_api.py` ships as a module the standalone gate imports;
         # `desktop/` is not one -- Hermes Desktop copies that whole folder
@@ -854,9 +859,7 @@ print(json.dumps(observed, ensure_ascii=False))
         awareness_module._awareness_context_matches_message_cached.cache_clear()
         awareness_module._awareness_route_hint_cached.cache_clear()
 
-        # No credential words in the message: "secret token" is something the
-        # per-turn skill candidate line answers, and this case is an idle host.
-        message = "tell me a short joke about penguins, zq-4471-marker"
+        message = "tell me a short joke about secret-token-123"
 
         # Case (a): a genuinely idle host with an empty runtime home. Nothing
         # to report, so the hook keeps returning None exactly as today.
@@ -890,7 +893,7 @@ print(json.dumps(observed, ensure_ascii=False))
         self.assertNotIn("[OMH] Native bridge status context.", error_payload["context"])
         serialized = json.dumps(error_payload, sort_keys=True)
         self.assertNotIn("status-boom", serialized)
-        self.assertNotIn("zq-4471-marker", serialized)
+        self.assertNotIn("secret-token-123", serialized)
 
     def test_setup_default_installs_plugin(self) -> None:
         with TemporaryDirectory() as tmp:

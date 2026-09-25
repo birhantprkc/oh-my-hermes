@@ -10,6 +10,7 @@ admission rule that decides whether a turn gets a candidate line at all.
 from __future__ import annotations
 
 import dataclasses
+import json
 from pathlib import Path
 import unittest
 from unittest import mock
@@ -73,6 +74,10 @@ EVERYDAY_MESSAGES = (
     "My grandma keeps forgetting names lately. How can I support her?",
     "Can you look over my monthly budget? Rent 1200, food 500, car 350.",
     "Is it worth fixing my old bike or buying a new one?",
+    # Conversational requests whose topic words reach a skill.
+    "tell me a short joke about secret-token-123",
+    "recommend a good movie about hackers and security",
+    "I feel stressed about my team deadline and my manager, any advice?",
 )
 
 SMALL_TALK_AND_FACTS = (
@@ -106,6 +111,18 @@ class SidecarParityTests(unittest.TestCase):
             with self.subTest(token=token):
                 self.assertEqual(bundle._stem(token, core._STEM_EXCEPTIONS), core.stem(token))
 
+    def test_the_stemmer_matches_on_every_catalog_word(self) -> None:
+        from omh.routing.localization import routing_terms
+
+        words: set[str] = set()
+        for definition in routable_definitions():
+            for field, _weight in core.FIELD_WEIGHTS:
+                for raw in routing_terms(core._field_text(definition, field)):
+                    words.update(part for part in raw.split("-") if part.isascii() and part.isalnum())
+        self.assertGreater(len(words), 1000)
+        mismatched = sorted(word for word in words if bundle._stem(word, core._STEM_EXCEPTIONS) != core.stem(word))
+        self.assertEqual(mismatched, [])
+
     def test_ranking_matches_the_core_ranking(self) -> None:
         for message in PARITY_MESSAGES:
             with self.subTest(message=message):
@@ -133,6 +150,37 @@ class SidecarParityTests(unittest.TestCase):
             self.assertTrue(skill.situation)
             self.assertNotIn("[omh]", skill.situation)
 
+    def _with_sidecar_text(self, text: str) -> tuple[tuple[str, float], ...]:
+        from tempfile import TemporaryDirectory
+
+        with TemporaryDirectory() as tmp:
+            path = Path(tmp) / "skill_shortlist.json"
+            path.write_text(text, encoding="utf-8")
+            bundle._index.cache_clear()
+            bundle.lexical_ranking.cache_clear()
+            try:
+                with mock.patch.object(bundle, "SIDECAR_PATH", path):
+                    return bundle.lexical_ranking(WORK_REQUESTS[0][0])
+            finally:
+                bundle._index.cache_clear()
+                bundle.lexical_ranking.cache_clear()
+
+    def test_a_corrupt_sidecar_ranks_nothing(self) -> None:
+        self.assertEqual(self._with_sidecar_text('{"schema_version": '), ())
+
+    def test_a_sidecar_of_another_schema_ranks_nothing(self) -> None:
+        payload = json.loads(standalone_skill_shortlist_json())
+        payload["schema_version"] = "omh_skill_shortlist_index/v0"
+        self.assertEqual(self._with_sidecar_text(json.dumps(payload)), ())
+
+    def test_a_malformed_row_ranks_nothing(self) -> None:
+        payload = json.loads(standalone_skill_shortlist_json())
+        del payload["skills"][0]["terms"]
+        self.assertEqual(self._with_sidecar_text(json.dumps(payload)), ())
+        payload = json.loads(standalone_skill_shortlist_json())
+        payload["skills"][1]["terms"] = {"heavy": "word"}
+        self.assertEqual(self._with_sidecar_text(json.dumps(payload)), ())
+
     def test_a_missing_sidecar_ranks_nothing(self) -> None:
         bundle._index.cache_clear()
         bundle.lexical_ranking.cache_clear()
@@ -152,6 +200,13 @@ class AdmissionTests(unittest.TestCase):
                 labels = [label for label, _situation in _candidates(message)]
                 self.assertIn(skill, labels)
                 self.assertLessEqual(len(labels), bundle.MAX_CANDIDATES)
+
+    def test_conversational_requests_are_held_back_by_their_kind_not_their_topic(self) -> None:
+        for message in EVERYDAY_MESSAGES[-3:]:
+            with self.subTest(message=message):
+                # The ranking alone would admit each of them.
+                self.assertTrue(bundle.skill_candidates(message))
+                self.assertTrue(bundle._conversational(message))
 
     def test_everyday_chat_with_skill_words_gets_no_line(self) -> None:
         for message in EVERYDAY_MESSAGES:
@@ -190,8 +245,38 @@ class AdmissionTests(unittest.TestCase):
         self.assertEqual(awareness_route_hint(message)["hints"][0]["id"], "direct_workflow_invocation")
         self.assertEqual(_candidates(message), ())
 
-    def test_non_english_input_gets_no_line(self) -> None:
+    def test_only_ascii_words_are_ranked(self) -> None:
+        # A message with no ASCII word gets no line; a mixed one is ranked on
+        # its ASCII words and can.
         self.assertEqual(_candidates("리텐션이 떨어졌어. 온보딩에서 어디서 이탈하는지 찾아줘."), ())
+        # A particle glued to an English word makes a non-ASCII token, so the
+        # English words here stand apart.
+        mixed = "activation, retention, churn 지표가 온보딩 직후에 나빠졌어. 원인 찾아줘"
+        self.assertIn("omh-lifecycle-growth", [label for label, _ in _candidates(mixed)])
+
+    def test_the_maestro_lane_is_never_listed(self) -> None:
+        message = "I already chose Claude Code as coding owner; prepare the maestro handoff prompt for it"
+        self.assertIn("maestro", [name for name, _ in bundle.lexical_ranking(message)[:3]])
+        self.assertNotIn("ulw-maestro", [label for label, _ in bundle.skill_candidates(message)])
+
+    def test_admission_reads_only_the_head_of_the_ranking(self) -> None:
+        # Only the fourth-ranked skill would admit this message.
+        message = "The provider changed how their model handles tools; adapt our routing to it."
+        self.assertEqual(bundle.skill_candidates(message), ())
+        with mock.patch.object(bundle, "ADMISSION_HEAD", bundle.ADMISSION_HEAD + 2):
+            self.assertTrue(bundle.skill_candidates(message))
+
+    def test_three_content_words_are_enough_two_are_not(self) -> None:
+        self.assertEqual(len(set(bundle.lexical_terms("retention churn onboarding"))), 3)
+        self.assertTrue(_candidates("retention churn onboarding"))
+        self.assertEqual(_candidates("churn retention"), ())
+
+    def test_a_factual_question_is_skipped_up_to_the_word_limit(self) -> None:
+        at_limit = "What is the difference between an SLO and an error budget in a postmortem?"
+        over = "What is the difference between an SLO and an error budget in a postmortem review?"
+        self.assertEqual(len(at_limit.split()), bundle._FACTUAL_MAX_WORDS)
+        self.assertEqual(_candidates(at_limit), ())
+        self.assertTrue(_candidates(over))
 
     def test_no_jev_skill_is_ever_listed(self) -> None:
         message = "flag auth and migration risk on this diff under review before I approve it"
@@ -242,6 +327,34 @@ class LineTests(unittest.TestCase):
         self.assertIn("skill_view", line)
         self.assertNotIn("OMH", line)
         self.assertEqual(bundle.skill_candidate_line(()), "")
+
+    def setUp(self) -> None:
+        bundle.reset_candidate_line_state()
+        self.addCleanup(bundle.reset_candidate_line_state)
+
+    def test_a_session_sees_a_candidate_set_once(self) -> None:
+        first = _candidates(WORK_REQUESTS[0][0])
+        second = _candidates(WORK_REQUESTS[1][0])
+        self.assertNotEqual(first, second)
+        self.assertTrue(bundle.claim_candidate_line("s1", first))
+        self.assertFalse(bundle.claim_candidate_line("s1", first))
+        self.assertTrue(bundle.claim_candidate_line("s2", first))
+        self.assertTrue(bundle.claim_candidate_line("s1", second))
+        self.assertTrue(bundle.claim_candidate_line("s1", first))
+        self.assertFalse(bundle.claim_candidate_line("s1", ()))
+
+    def test_pre_llm_call_repeats_the_line_only_when_the_set_changes(self) -> None:
+        from tempfile import TemporaryDirectory
+
+        with TemporaryDirectory() as tmp:
+            kwargs = {"omh_home": f"{tmp}/omh", "hermes_home": f"{tmp}/hermes", "is_first_turn": False}
+
+            def context(message: str) -> str:
+                return str((llm_hooks.pre_llm_call(user_message=message, session_id="s-dedup", **kwargs) or {}).get("context", ""))
+
+            self.assertIn("Skills that may fit this request", context(WORK_REQUESTS[0][0]))
+            self.assertNotIn("Skills that may fit this request", context(WORK_REQUESTS[0][0] + " Please."))
+            self.assertIn("Skills that may fit this request", context(WORK_REQUESTS[1][0]))
 
     def test_pre_llm_call_carries_the_line_for_work_and_not_for_chat(self) -> None:
         from tempfile import TemporaryDirectory
