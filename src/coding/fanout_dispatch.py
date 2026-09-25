@@ -169,6 +169,8 @@ from .workspace_preflight import (
 from .verification_execution import VerificationExecutionGate
 from .verification_integration import run_post_integration_verification
 from .verification_plan import VERIFICATION_PLAN_SCHEMA_VERSION, compile_verification_plan
+from .postconditions import resolve_task_linked_postcondition, unresolved_task_linked_postcondition
+from ..codegraph import build_codegraph
 from .verification_receipts import SingleFlight
 from .verification_runner import PlanRunContext, run_verification_plan
 from .fanout_unit_results import (
@@ -1752,6 +1754,28 @@ def _run_integration_verification_wave(
             )
             if diagnostics is not None:
                 entry.update(diagnostics)
+
+
+def _task_linked_postcondition(
+    runner: Callable[..., Any], worktree: Path, *, base_sha: str, head_sha: str, test_runner: str
+) -> dict[str, Any]:
+    """Resolve a unit's task-linked tests from the diff the dispatcher observed.
+
+    The changed paths come from git between the base and the committed head the
+    dispatcher already verified as clean, never from the executor's own list.
+    """
+    # `-z` so a path git would otherwise quote arrives as its literal text.
+    listing = _git_text(runner, worktree, ["git", "diff", "--name-only", "--no-renames", "-z", base_sha, head_sha])
+    if listing is None:
+        return unresolved_task_linked_postcondition(test_runner, "the committed diff could not be read")
+    changed = [entry for entry in listing.split("\0") if entry.strip()]
+    try:
+        graph = build_codegraph(worktree)
+    except (OSError, ValueError) as exc:
+        return unresolved_task_linked_postcondition(
+            test_runner, f"the codegraph could not be built ({type(exc).__name__})"
+        )
+    return resolve_task_linked_postcondition(graph, changed, test_runner)
 
 
 def _run_unit_verification(
@@ -4625,22 +4649,48 @@ def _dispatch_unit(
                 'runtime_profile': owner, 'attempt_id': attempt_id,
                 'failure_diagnostic': failure_diagnostic})
 
-        verification = _run_unit_verification(
-            paths,
-            unit,
-            run_ref=run_ref,
-            unit_id=unit_id,
-            worktree=worktree,
-            owner=owner,
-            runner=runner,
-            child_env=verification_environment.environment,
-            fanout_id=fanout_id,
-            wave_width=verification_wave_width,
-            execution_gate=verification_execution_gate,
-            confinement=confinement,
-            environment_policy=environment_policy,
-            on_failure=verification_failed, known_secrets=known_secrets,
-        )
+        # The task-linked postcondition joins the declared checks as one more
+        # dispatcher-run command, so its exit status moves the same ladder.
+        # One the dispatcher could not resolve fails closed: nothing runs and
+        # no observation is appended.
+        verification_unit: Mapping[str, Any] = unit
+        task_linked: dict[str, Any] | None = None
+        test_runner = str(unit.get("task_linked_test_runner") or "")
+        if test_runner:
+            task_linked = _task_linked_postcondition(
+                runner, worktree, base_sha=base_sha, head_sha=producer_revision, test_runner=test_runner
+            )
+            if task_linked["command"]:
+                verification_unit = {
+                    **unit,
+                    "verification_commands": [*declared_verification_commands(unit), task_linked["command"]],
+                }
+        if task_linked is not None and task_linked["status"] == "not_resolved":
+            verification = {
+                "verification_status": "failed",
+                "verification_checks": [],
+                "verification_failures": [f"task-linked postcondition not resolved: {task_linked['reason']}"],
+                "verification_claim_boundary": UNIT_VERIFICATION_CLAIM_BOUNDARY,
+            }
+        else:
+            verification = _run_unit_verification(
+                paths,
+                verification_unit,
+                run_ref=run_ref,
+                unit_id=unit_id,
+                worktree=worktree,
+                owner=owner,
+                runner=runner,
+                child_env=verification_environment.environment,
+                fanout_id=fanout_id,
+                wave_width=verification_wave_width,
+                execution_gate=verification_execution_gate,
+                confinement=confinement,
+                environment_policy=environment_policy,
+                on_failure=verification_failed, known_secrets=known_secrets,
+            )
+        if task_linked is not None:
+            verification["task_linked_postcondition"] = task_linked
         if health_events is not None:
             health_events.finished(
                 verification_task,
@@ -4670,7 +4720,10 @@ def _dispatch_unit(
     # The ladder's own two rungs, read once so the envelope and the unit state
     # below it cannot disagree about what was observed.
     result_schema_valid = bool(unit_result.get("result_schema_valid"))
-    verification_observed = _unit_verification_is_observed(paths, run_ref)
+    # The journal event is sticky for the run, so an earlier attempt's pass
+    # would otherwise outlive a check that failed in this one.
+    verification_failed_now = verification.get("verification_status") == "failed"
+    verification_observed = _unit_verification_is_observed(paths, run_ref) and not verification_failed_now
     # `unit_result_missing` is the intake path's word for "no result record
     # appeared at all", as opposed to one that appeared and failed validation.
     result_record_present = str(unit_result.get("unit_result_status", "")) != "unit_result_missing"
@@ -4698,6 +4751,10 @@ def _dispatch_unit(
         unit_state, unit_state_reason = UNIT_STATE_FAILED, "result_missing"
     elif not result_schema_valid:
         unit_state, unit_state_reason = UNIT_STATE_FAILED, "result_invalid"
+    elif verification_failed_now:
+        # Ran and failed, as opposed to never observed: a reader deciding what
+        # to do next needs to tell the two apart without reading the rows.
+        unit_state, unit_state_reason = UNIT_STATE_FAILED, "verification_failed"
     else:
         unit_state, unit_state_reason = UNIT_STATE_FAILED, "verification_not_observed"
     result = {

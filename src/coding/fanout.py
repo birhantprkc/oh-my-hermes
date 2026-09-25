@@ -45,6 +45,7 @@ from .executor_capability_snapshots import (
     prepared_executor_capability_snapshot,
 )
 from .fanout_review_budget import normalized_review_role
+from .postconditions import normalized_task_linked_test_runner, task_linked_criterion
 from .model_routing import MODEL_CATEGORIES, canonical_model_category, model_route_for_unit
 from .media_handoff_capabilities import build_executor_modality_decision, normalize_input_representation
 
@@ -444,6 +445,9 @@ def _normalized_unit(unit: Mapping[str, object], index: int) -> dict[str, object
         # How much source text the unit may read and from which ranges; None
         # when undeclared so existing contracts stay byte-identical.
         "input_budget": _normalized_input_budget(unit.get("input_budget"), index),
+        # The command prefix the dispatcher runs on the tests that directly
+        # import what the unit changed; '' when undeclared.
+        "task_linked_test_runner": normalized_task_linked_test_runner(unit.get("task_linked_test_runner"), index),
     }
 
 
@@ -817,6 +821,16 @@ def _contract_unit(
         ],
         "status": "prepared",
     }
+    # A declared runner turns the first prose check into the task-linked
+    # postcondition the dispatcher observes; absence keeps the contract
+    # byte-identical to one frozen before the field existed.
+    runner = str(unit.get("task_linked_test_runner") or "")
+    if runner:
+        contract_unit["task_linked_test_runner"] = runner
+        contract_unit["integration_checks"] = [
+            task_linked_criterion(runner),
+            "no edits outside boundary.file_scope",
+        ]
     # Only a declared answer rides the contract; absence keeps existing
     # contracts byte-identical and means "arrange from discovery at dispatch".
     if unit.get("skill_sequence") is not None:

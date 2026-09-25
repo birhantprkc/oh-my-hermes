@@ -1370,6 +1370,87 @@ class ArmTests(unittest.TestCase):
         self.assertEqual(result["checks"][0]["exit_code"], 3)
         self.assertEqual(result["checks"][1]["classification"], "not_observed")
 
+    def _task_linked_workspace(self, root: Path) -> tuple[Path, str]:
+        """A tiny checkout: one module, a direct test, a test the task owns."""
+
+        workspace = root / "ws"
+        files = {
+            "pkg/__init__.py": "",
+            "pkg/mod.py": "def value():\n    return 1\n",
+            "tests/test_mod.py": (
+                "import unittest\nfrom pkg.mod import value\n\n\n"
+                "class T(unittest.TestCase):\n    def test_value(self):\n        self.assertEqual(value(), 1)\n"
+            ),
+            "tests/test_hidden.py": "import unittest\nfrom pkg.mod import value\n",
+        }
+        for rel, text in files.items():
+            target = workspace / rel
+            target.parent.mkdir(parents=True, exist_ok=True)
+            target.write_text(text, encoding="utf-8", newline="\n")
+        for argv in (["init", "-q"], ["add", "-A"], ["-c", "user.name=t", "-c", "user.email=t@t", "commit", "-q", "-m", "base"]):
+            subprocess.run(["git", *argv], cwd=workspace, check=True, capture_output=True)
+        base = subprocess.run(
+            ["git", "rev-parse", "HEAD"], cwd=workspace, check=True, capture_output=True, text=True
+        ).stdout.strip()
+        return workspace, base
+
+    def test_the_gate_runs_the_tests_the_candidates_own_edits_reach(self) -> None:
+        """The gate no longer only re-runs criteria the candidate already ran.
+
+        The candidate breaks `pkg/mod.py` without committing. The corpus check
+        passes; the task-linked command, derived from the candidate's own diff,
+        runs the pre-existing test that imports the edited module and fails.
+        The task's own test file is left out, as the regression set leaves it.
+        """
+
+        with TemporaryDirectory() as root:
+            workspace, base = self._task_linked_workspace(Path(root))
+            (workspace / "pkg" / "mod.py").write_text("def value():\n    return 2\n", encoding="utf-8")
+            (workspace / "pkg" / "new.py").write_text("x = 1\n", encoding="utf-8")
+            task = {
+                "merge_base": base,
+                "test_paths": ["tests/test_hidden.py"],
+                "verification_commands": ["python -c 'pass'"],
+            }
+            result = runner._run_gate(
+                python_executable=sys.executable,
+                workspace=workspace,
+                scratch=Path(root) / "scratch",
+                task=task,
+                timeout=120,
+            )
+        linked = result["task_linked_postcondition"]
+        self.assertEqual(linked["changed_paths"], ["pkg/mod.py", "pkg/new.py"])
+        self.assertEqual(linked["selected_test_paths"], ["tests/test_mod.py"])
+        self.assertEqual(linked["excluded_test_paths"], ["tests/test_hidden.py"])
+        self.assertEqual(
+            [(row["command"], row["status"]) for row in result["checks"]],
+            [("python -c 'pass'", "passed"), ("python -m unittest tests/test_mod.py", "failed")],
+        )
+        self.assertEqual(result["status"], "failed")
+
+    def test_an_untouched_checkout_adds_no_task_linked_command(self) -> None:
+        with TemporaryDirectory() as root:
+            workspace, base = self._task_linked_workspace(Path(root))
+            result = runner._run_gate(
+                python_executable=sys.executable,
+                workspace=workspace,
+                scratch=Path(root) / "scratch",
+                task={"merge_base": base, "test_paths": [], "verification_commands": ["python -c 'pass'"]},
+                timeout=120,
+            )
+        self.assertEqual(result["task_linked_postcondition"]["status"], "no_reachable_tests")
+        self.assertEqual([row["command"] for row in result["checks"]], ["python -c 'pass'"])
+        self.assertEqual(result["status"], "passed")
+
+    def test_the_prompt_names_the_task_linked_command_the_gate_runs(self) -> None:
+        route = {"selected_model": "m", "selected_reasoning_effort": "low", "model_family": "gpt"}
+        unit = arms.benchmark_unit(file_scope=["src/"], checks=["python -m compileall -q src"], route=route)
+        delegated = arms.delegation_prompt("Do the thing.", unit)
+        self.assertIn("`PYTHONPATH=tests python3 -m unittest <test files>` passes", delegated)
+        prefix, argv = arms.gate_invocation(arms.TASK_LINKED_RUNNER)
+        self.assertEqual(shlex.join([*prefix, *argv]), "PYTHONPATH=tests python3 -m unittest")
+
     def test_a_usage_file_that_never_appeared_is_not_a_zero_reading(self) -> None:
         with TemporaryDirectory() as root:
             self.assertEqual(arms._read_usage(Path(root) / "missing.json"), {})

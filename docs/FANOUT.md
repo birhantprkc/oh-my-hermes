@@ -423,6 +423,32 @@ Rules, all applied at freeze time:
   `planned_verification_commands`. This runs inside the same sanctioned
   dispatch bridge as the unit spawns themselves: still operator-invoked, still
   local, still no merge and no network from omh.
+- **Task-linked postconditions (opt-in).** Declared commands say what the
+  operator chose to check, and nothing ties them to the task: a compile pass
+  and a few same-package modules pass whether or not the change is right. A
+  unit may also declare `task_linked_test_runner`, a command prefix such as
+  `PYTHONPATH=tests python -m unittest` (at most 200 chars, parsed at freeze
+  like any verification command). The frozen unit carries it, and its prose
+  "unit tests covering the unit's file_scope pass" check becomes a criterion
+  naming the runner and the rule. Under `--run-verification`, after the
+  producer HEAD is observed clean, dispatch reads the committed diff between
+  the base and that HEAD itself (never the executor's own `changed_paths`),
+  builds the local codegraph over the unit worktree, and selects every test
+  module that **directly** imports a changed file, plus any changed test
+  module (`omh codegraph tests --changed` entries at distance 0 or 1 — the
+  whole reverse closure of a core module reaches most of a suite). The runner
+  plus those paths joins the unit's checks as one more dispatcher-observed
+  command, so its exit status moves the same ladder: a failure appends no
+  `unit_verification_observed` event, and the unit records `unit_state:
+  failed` with `unit_state_reason: verification_failed` (a check that ran and
+  failed, as opposed to `verification_not_observed`). The resolved selection
+  rides the unit record as `task_linked_postcondition`
+  (`task_linked_postcondition/v1`, with `status` `tests_selected`,
+  `no_reachable_tests`, or `not_resolved`). A change no test imports adds no
+  command and leaves the declared checks to decide; a diff or codegraph the
+  dispatcher cannot read fails closed with nothing run. Dispatch has no
+  repair loop of its own: a failed postcondition is reported, and the next
+  attempt is the operator's (or the parent agent's) decision.
 - **Verification plans, tiers, and receipts (opt-in).** Beside bare
   `verification_commands`, a unit may declare `verification_checks` — the
   additive, structured sibling (declare one or the other, never both; the
