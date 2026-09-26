@@ -210,9 +210,9 @@ PLUGIN_TOOL_SCHEMA_CHAR_LIMIT = 60871
 # and whose candidate set differs from the last one this session was shown;
 # a repeat of the same set costs nothing. Re-derived from the producer.
 # 5544 -> 5647: the line names the exact call form, skill_view(name="...")
-# with no category prefix, because Hermes resolves `category/name` only in
-# its own skills dirs and a prefixed load of an OMH skill returns "not
-# found" (+103). The line is now about 430-580 characters on a turn that
+# with no category prefix, because a model that guesses the category
+# (`operator/omh-x` for a skill filed under `reviewer/`) gets "not found";
+# Hermes does resolve a correct `category/name` in external dirs (+103). The line is now about 430-580 characters on a turn that
 # carries it. Re-derived from the producer.
 # 5647 -> 5662: the work-context skill openings reach the route hint's
 # context card (+15 on the routed request). Re-derived from the producer.
