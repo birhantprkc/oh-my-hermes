@@ -172,7 +172,7 @@ These surfaces are generated command references, not installed Hermes workflow s
 
 ### loop
 
-[omh] Ambitious goal needing many iterative cycles: agentic interviewer -> planner -> researcher -> builder -> reviewer cycles until a real gate.
+[omh] Ambitious project goal needing many build cycles: agentic interviewer -> planner -> researcher -> builder -> reviewer cycles until a real gate.
 
 - Category: `goal-loop`
 - Phase: `continuous-goal-loop`
@@ -448,7 +448,7 @@ These surfaces are generated command references, not installed Hermes workflow s
 
 ### jit-learn
 
-[omh] Blocked and choosing a learning target: just-in-time learning workflow: select and confirm an immediate learning target, research credible sources, and prepare an application-first brief without popularity ranking.
+[omh] Blocked on a project by a knowledge gap: just-in-time learning workflow: select and confirm an immediate learning target, research credible sources, and prepare an application-first brief without popularity ranking.
 
 - Category: `research`
 - Phase: `learning-target`
@@ -852,7 +852,7 @@ These surfaces are generated command references, not installed Hermes workflow s
 
 ### web-research
 
-[omh] Current-facts lookup on the web: web lookup lane - settle a current-facts question in one cited retrieval round with retrieval dates and source-quality notes; for pre-spec grounding across reference implementations use `research`.
+[omh] Current technical or business fact to cite from web: web lookup lane - settle a current-facts question in one cited retrieval round with retrieval dates and source-quality notes; for pre-spec grounding across reference implementations use `research`.
 
 - Category: `research`
 - Phase: `web-evidence`
@@ -1061,7 +1061,7 @@ These surfaces are generated command references, not installed Hermes workflow s
 
 ### research-brief
 
-[omh] Market, competitor, or pricing question: business research brief - turns a market, competitor, pricing, or customer question into a structured evidence-vs-inference brief; for raw link gathering use ulw-research, and for ongoing multi-role research use research-department.
+[omh] Business question on market, competitors, pricing: business research brief - turns a market, competitor, pricing, or customer question into a structured evidence-vs-inference brief; for raw link gathering use ulw-research, and for ongoing multi-role research use research-department.
 
 - Category: `research`
 - Phase: `business-brief`
@@ -1256,7 +1256,7 @@ These surfaces are generated command references, not installed Hermes workflow s
 
 ### strategy-brief
 
-[omh] Decide between options: tradeoffs, a recommendation, and a decision note you can act on.
+[omh] Team or business decision between options: tradeoffs, a recommendation, and a decision note you can act on.
 
 - Category: `strategy`
 - Phase: `brief`
@@ -1320,7 +1320,7 @@ These surfaces are generated command references, not installed Hermes workflow s
 
 ### meeting-brief
 
-[omh] Upcoming meeting that lacks an agenda: agenda, prompts, decisions, and record template.
+[omh] Upcoming work meeting that lacks an agenda: agenda, prompts, decisions, and record template.
 
 - Category: `meeting`
 - Phase: `preparation`
@@ -1440,7 +1440,7 @@ These surfaces are generated command references, not installed Hermes workflow s
 
 ### finance-analysis
 
-[omh] Budget overruns, cash risk, or close issues: turn finance and accounting inputs into a decision-ready variance, cash, and close-risk brief.
+[omh] Company budget overrun, cash risk, or close issue: turn finance and accounting inputs into a decision-ready variance, cash, and close-risk brief.
 
 - Category: `operations`
 - Phase: `finance-analysis`
@@ -1554,7 +1554,7 @@ These surfaces are generated command references, not installed Hermes workflow s
 
 ### people-ops
 
-[omh] Hiring or people-process decisions: turn hiring and people context into a fair, structured recruiting or people-operations brief.
+[omh] Company hiring or HR process to structure: turn hiring and people context into a fair, structured recruiting or people-operations brief.
 
 - Category: `operations`
 - Phase: `people-operations`
@@ -1616,7 +1616,7 @@ These surfaces are generated command references, not installed Hermes workflow s
 
 ### legal-compliance-review
 
-[omh] Contract, NDA, or policy with legal exposure: surface contract and compliance risks, questions, and escalation points before a legal decision or action.
+[omh] Business contract, NDA, or policy with legal risk: surface contract and compliance risks, questions, and escalation points before a legal decision or action.
 
 - Category: `review`
 - Phase: `legal-compliance-review`
@@ -1741,7 +1741,7 @@ These surfaces are generated command references, not installed Hermes workflow s
 
 ### support-operations
 
-[omh] Customer support case needs a reply or escalation: turn a support case into a clear customer reply, severity path, and owned next step.
+[omh] Support ticket your team must answer or escalate: turn a support case into a clear customer reply, severity path, and owned next step.
 
 - Category: `triage`
 - Phase: `support-operations`
@@ -1807,7 +1807,7 @@ These surfaces are generated command references, not installed Hermes workflow s
 
 ### curriculum-design
 
-[omh] Teaching goal that needs a course or syllabus: turn a learning goal into a teachable curriculum, assessment plan, and learner-ready sequence.
+[omh] Team training or course that needs a syllabus: turn a learning goal into a teachable curriculum, assessment plan, and learner-ready sequence.
 
 - Category: `planning`
 - Phase: `curriculum-design`
@@ -2216,7 +2216,7 @@ These surfaces are generated command references, not installed Hermes workflow s
 
 ### operating-rhythm
 
-[omh] Keeping minutes, retros, and decision history: meeting minutes, scrum/sprint records, retros, decisions, and follow-up history.
+[omh] Team minutes, retros, and decision history to keep: meeting minutes, scrum/sprint records, retros, decisions, and follow-up history.
 
 - Category: `operations`
 - Phase: `rhythm-history`
@@ -2394,7 +2394,7 @@ These surfaces are generated command references, not installed Hermes workflow s
 
 ### img-summary
 
-[omh] Image card or infographic of content: image prompt cards - turn meetings, reports, PRs, issues, research, and releases into domain-aware image prompt cards.
+[omh] Infographic card for a report, PR, or release: image prompt cards - turn meetings, reports, PRs, issues, research, and releases into domain-aware image prompt cards.
 
 - Category: `materials`
 - Phase: `visual-prompt-card`
@@ -2560,7 +2560,7 @@ These surfaces are generated command references, not installed Hermes workflow s
 
 ### design-orchestration
 
-[omh] Entire design problem to delegate: prepare a bounded design direction, existing-lane composition, and executor-neutral handoff.
+[omh] Entire product design problem to delegate: prepare a bounded design direction, existing-lane composition, and executor-neutral handoff.
 
 - Category: `materials`
 - Phase: `design-orchestration`
@@ -4159,7 +4159,7 @@ These surfaces are generated command references, not installed Hermes workflow s
 
 ### automation-blueprint
 
-[omh] Recurring scheduled job or reminder: design recurring Hermes operations with schedule, delivery, silence policy, context chain, and prepared-vs-observed status.
+[omh] Recurring Hermes job on a schedule (cron, digests): design recurring Hermes operations with schedule, delivery, silence policy, context chain, and prepared-vs-observed status.
 
 - Category: `operations`
 - Phase: `scheduled-ops-blueprint`
@@ -4623,7 +4623,7 @@ These surfaces are generated command references, not installed Hermes workflow s
 
 ### plan
 
-[omh] Unplanned feature or bugfix: structured planning before execution.
+[omh] Software feature or bugfix not yet planned: structured planning before execution.
 
 - Category: `planning`
 - Phase: `plan`
@@ -4681,7 +4681,7 @@ These surfaces are generated command references, not installed Hermes workflow s
 
 ### ralplan
 
-[omh] High-stakes proposal needing approval: consensus planning with review gates.
+[omh] High-stakes technical proposal needing approval: consensus planning with review gates.
 
 - Category: `planning`
 - Phase: `reviewed-plan`
@@ -4765,7 +4765,7 @@ These surfaces are generated command references, not installed Hermes workflow s
 
 ### adversarial-consensus
 
-[omh] Proposal facing adversarial scrutiny: independent perspectives attack a proposal, then distill into a bundle a separate planner consumes.
+[omh] Technical proposal facing adversarial scrutiny: independent perspectives attack a proposal, then distill into a bundle a separate planner consumes.
 
 - Category: `planning`
 - Phase: `adversarial-consensus`
@@ -5264,7 +5264,7 @@ These surfaces are generated command references, not installed Hermes workflow s
 
 ### ultraperf
 
-[omh] Unexplained slowness, leaks, or cost spikes: find where a system is actually slow, leaking, or expensive across runtime, memory, token cost, storage, rendering, inference, CI, and query domains, then fix one measured hot path at a time behind a regression budget.
+[omh] Software slowness, memory leaks, or cost spikes: find where a system is actually slow, leaking, or expensive across runtime, memory, token cost, storage, rendering, inference, CI, and query domains, then fix one measured hot path at a time behind a regression budget.
 
 - Category: `optimization`
 - Phase: `measured-optimization-loop`
@@ -7067,7 +7067,7 @@ These surfaces are generated command references, not installed Hermes workflow s
 
 ### jev-ask
 
-[omh] Jev asked for yes/no or pick-one odds: Jev ask: typed yes/no, pick-one, or scored questions to Jev with your own key; returns probabilities, never prose.
+[omh] User named Jev for yes/no or pick-one probabilities: Jev ask: typed yes/no, pick-one, or scored questions to Jev with your own key; returns probabilities, never prose.
 
 - Category: `gateway`
 - Phase: `jev-ask`
@@ -7529,7 +7529,7 @@ These surfaces are generated command references, not installed Hermes workflow s
 
 ### memory-new
 
-[omh] Remember a fact for future sessions: capture one bounded durable project or product memory candidate through explicit remember, refuse, or defer review; for existing Hermes memory use omh-memory-sync, and for a past decision use decision-recall.
+[omh] Project fact to remember across future sessions: capture one bounded durable project or product memory candidate through explicit remember, refuse, or defer review; for existing Hermes memory use omh-memory-sync, and for a past decision use decision-recall.
 
 - Category: `memory`
 - Phase: `candidate-capture`
@@ -7825,7 +7825,7 @@ These surfaces are generated command references, not installed Hermes workflow s
 
 ### voice-operator
 
-[omh] Short spoken or mobile-style request: terse voice and mobile-style requests - turn short spoken-style asks into clarify, plan, status, handoff, or confirmation actions.
+[omh] Dictated voice note about project work or status: terse voice and mobile-style requests - turn short spoken-style asks into clarify, plan, status, handoff, or confirmation actions.
 
 - Category: `accessibility`
 - Phase: `voice-routing`
@@ -8151,7 +8151,7 @@ These surfaces are generated command references, not installed Hermes workflow s
 
 ### live-info-operator
 
-[omh] Weather, exchange-rate, or sports lookups: policy overlay for live lookups - add provider, freshness, units, and source-quality gates after preferring native live-data tools for ordinary weather, finance, sports, maps, and time-zone requests.
+[omh] Live rates or scores a task must cite with sources: policy overlay for live lookups - add provider, freshness, units, and source-quality gates after preferring native live-data tools for ordinary weather, finance, sports, maps, and time-zone requests.
 
 - Category: `live-info`
 - Phase: `live-info-task`
@@ -8380,7 +8380,7 @@ These surfaces are generated command references, not installed Hermes workflow s
 
 ### physical-device-readiness
 
-[omh] Controlling a printer, robot, or IoT device: gate robots, 3D printers, IoT relays, sensors, and lab hardware before trials; use external-connector-readiness for provider or connector adoption and toolbelt-readiness for missing control tools.
+[omh] Agent control of a robot, 3D printer, or IoT relay: gate robots, 3D printers, IoT relays, sensors, and lab hardware before trials; use external-connector-readiness for provider or connector adoption and toolbelt-readiness for missing control tools.
 
 - Category: `operations`
 - Phase: `device-readiness`
@@ -8453,7 +8453,7 @@ These surfaces are generated command references, not installed Hermes workflow s
 
 ### content-operator
 
-[omh] Writing or rewriting text for an audience: scope publish-ready writing, rewriting, summarization, translation, release-note, newsletter, customer-copy, social-copy, README-copy, and email-draft work with audience, tone, style, source, review, and hallucination gates.
+[omh] Product or company copy to publish or rewrite: scope publish-ready writing, rewriting, summarization, translation, release-note, newsletter, customer-copy, social-copy, README-copy, and email-draft work with audience, tone, style, source, review, and hallucination gates.
 
 - Category: `content`
 - Phase: `content-task`
@@ -8850,7 +8850,7 @@ These surfaces are generated command references, not installed Hermes workflow s
 
 ### achievements
 
-[omh] Unlocked badges and achievement progress: achievements observation: summarize hermes-achievements badges, tiers, recent unlocks, and progress from local plugin artifacts.
+[omh] Hermes badges unlocked and achievement progress: achievements observation: summarize hermes-achievements badges, tiers, recent unlocks, and progress from local plugin artifacts.
 
 - Category: `observability`
 - Phase: `telemetry-card`

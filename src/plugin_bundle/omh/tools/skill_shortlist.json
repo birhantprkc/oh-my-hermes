@@ -36,11 +36,11 @@
 "anchors":"10k engineer exhaustion feedback goal good horizon improv iterat known long met never permission profil resum star stop token until yet",
 "label":"ulw-loop",
 "name":"loop",
-"situation":"Ambitious goal needing many iterative cycles",
+"situation":"Ambitious project goal needing many build cycles",
 "terms":{
-"1":"agentic ambitious continu controller cycl direct high invocation invok iterativ lane level mean need start through user",
-"2":"10k after builder engineer exhaustion gate good horizon improv interviewer iterat known met never path permission plan planner profil project real research researcher reviewer session star work yet",
-"3":"stop",
+"1":"agentic ambitious build continu controller cycl direct high invocation invok lane level mean need start through user",
+"2":"10k after builder engineer exhaustion gate good horizon improv interviewer iterat known met never path permission plan planner profil real research researcher reviewer session star work yet",
+"3":"project stop",
 "4":"feedback keep long resum run token",
 "6":"goal loop until"
 }
@@ -76,18 +76,18 @@
 "anchors":"applicabl apply blocker book cours creator gap highest hit immediat immediately jit knowledg learn leverag payoff podcast problem recommend resourc right specific target topic unblock week",
 "label":"omh-jit-learn",
 "name":"jit-learn",
-"situation":"Blocked and choosing a learning target",
+"situation":"Blocked on a project by a knowledge gap",
 "terms":{
-"1":"activ befor block choos confirm credibl direct first markdown popularity rank research time without",
-"2":"applicabl application apply book cours creator gap hit immediately keep knowledg next payoff podcast prepar problem recommend resourc right select specific topic unblock week",
-"3":"back blocker highest leverag",
+"1":"activ befor block confirm credibl direct first markdown popularity project rank research time without",
+"2":"applicabl application apply book cours creator hit immediately keep next payoff podcast prepar problem recommend resourc right select specific topic unblock week",
+"3":"back blocker gap highest knowledg leverag",
 "4":"brief immediat sourc target",
 "5":"jit",
 "9":"learn"
 }
 },
 {
-"anchors":"accept big coordinat cycl end fan finish green high implement integrat job lane modul multi multipl parallel part persistent process red refactor several singl split team throughput ultrawork ulw until worker",
+"anchors":"accept big coordinat cycl end fan finish green high implement integrat job lane modul multi multipl parallel part persistent process red refactor several singl split throughput ultrawork ulw until worker",
 "label":"ulw-work",
 "name":"ultrawork",
 "situation":"Accepted plan awaiting implementation",
@@ -133,10 +133,11 @@
 "anchors":"best citation cite current diversity documentation fresh gap guidanc internet latest library official onlin practic pric retrieval say scan search still today true upstream version week",
 "label":"omh-web-research",
 "name":"web-research",
-"situation":"Current-facts lookup on the web",
+"situation":"Current technical or business fact to cite from web",
 "terms":{
-"1":"across answer budget date declar depend depth external ground lane lookup note pre quality question spec study",
-"2":"back best chang citation cite cited claim diversity doc documentation evidenc fact fresh gap guidanc implementation internet library onlin practic pric referenc round say scan settl still today true upstream version week",
+"1":"across answer budget business date declar depend depth external ground lane lookup note pre quality question spec study technical",
+"2":"back best chang citation cited claim diversity doc documentation evidenc fact fresh gap guidanc implementation internet library onlin practic pric referenc round say scan settl still today true upstream version week",
+"3":"cite",
 "4":"check current find latest official retrieval search",
 "5":"sourc",
 "6":"research",
@@ -177,7 +178,7 @@
 "anchors":"business comparison competitiv competitor customer data feedback landscap market pric say scan search sizing trend vendor",
 "label":"omh-research-brief",
 "name":"research-brief",
-"situation":"Market, competitor, or pricing question",
+"situation":"Business question on market, competitors, pricing",
 "terms":{
 "1":"boundary department handoff herm link multi ongo preserv raw role scop strategy structur summariz turn ulw vs",
 "2":"call compar comparison competitiv data decision feedback gather inferenc landscap question ready say scan search set sizing trend vendor",
@@ -188,7 +189,7 @@
 }
 },
 {
-"anchors":"analyst briefer competitor daily department inbox incom knowledg market monitor notebooklm obsidian ops paper regular roundup scout stor storag summarizer synthesis team vault weekly",
+"anchors":"analyst briefer competitor daily department inbox incom knowledg market monitor notebooklm obsidian ops paper regular roundup scout stor storag summarizer synthesis vault weekly",
 "label":"omh-research-department",
 "name":"research-department",
 "situation":"Recurring market or topic research",
@@ -221,9 +222,9 @@
 "anchors":"bet big con contractor direction enterpris headcount hire leadership memo option outsourc pro quarter smb strategic strategy take tradeoff",
 "label":"omh-decide",
 "name":"strategy-brief",
-"situation":"Decide between options",
+"situation":"Team or business decision between options",
 "terms":{
-"1":"act between decid evidenc goal herm ready turn",
+"1":"act between business evidenc goal herm ready team turn",
 "2":"bet big call capacity con contractor cut demand direction enterpris first headcount leadership memo outsourc pro product quarter recommendation scop smb strategic take versus",
 "3":"note",
 "4":"decision hire next option plan tradeoff",
@@ -235,9 +236,9 @@
 "anchors":"agenda discuss discussion leadership meet rais sync templat tomorrow topic",
 "label":"omh-meeting-brief",
 "name":"meeting-brief",
-"situation":"Upcoming meeting that lacks an agenda",
+"situation":"Upcoming work meeting that lacks an agenda",
 "terms":{
-"1":"herm lack point upcom",
+"1":"herm lack point upcom work",
 "2":"discuss leadership need question rais review sync tomorrow topic",
 "3":"discussion prepar",
 "4":"prompt record templat",
@@ -265,9 +266,9 @@
 "anchors":"actual against analysis budget burn cash cfo end expens explain financ forecast month quarter rate runway varianc vs",
 "label":"omh-finance-analysis",
 "name":"finance-analysis",
-"situation":"Budget overruns, cash risk, or close issues",
+"situation":"Company budget overrun, cash risk, or close issue",
 "terms":{
-"1":"account bound context flow input issu ledger overrun ready revenu suppli turn",
+"1":"account bound company context flow input issu ledger overrun ready revenu suppli turn",
 "2":"against brief burn cfo decision explain quarter rate review runway vs",
 "3":"expens forecast risk",
 "4":"actual cash end month",
@@ -279,10 +280,10 @@
 "anchors":"debrief description fair fairly hire hiring interview job onboard ops peopl recruit role scorecard structur",
 "label":"omh-people-ops",
 "name":"people-ops",
-"situation":"Hiring or people-process decisions",
+"situation":"Company hiring or HR process to structure",
 "terms":{
-"1":"context operation outlin rubric support team turn",
-"2":"brief compar decision description fairly hire job new process run writ",
+"1":"company context decision hr operation outlin rubric support team turn",
+"2":"brief compar description fairly hire job new process run writ",
 "3":"fair onboard ops recruit role",
 "4":"scorecard structur",
 "5":"candidat debrief interview peopl plan",
@@ -293,9 +294,9 @@
 "anchors":"agreement analysis claus complianc counterparty dpa gdpr indemnity lawyer legal liability nda obligation regulatory risky servic term vendor",
 "label":"omh-legal-compliance-review",
 "name":"legal-compliance-review",
-"situation":"Contract, NDA, or policy with legal exposure",
+"situation":"Business contract, NDA, or policy with legal risk",
 "terms":{
-"1":"action assumption befor brief context counsel decision exposur issu matrix point process product risk scop suppli surfac",
+"1":"action assumption befor brief business context counsel decision issu matrix point process product risk scop suppli surfac",
 "2":"agreement analysis ask check counterparty dpa escalation gdpr indemnity languag lawyer negotiation obligation policy position preparation risky servic strategy term vendor",
 "3":"nda question regulatory",
 "4":"claus legal liability redlin",
@@ -308,13 +309,12 @@
 "anchors":"angry answer cannot customer draft email engineer escalation log refund reply respons ticket triag urgent",
 "label":"omh-support-operations",
 "name":"support-operations",
-"situation":"Customer support case needs a reply or escalation",
+"situation":"Support ticket your team must answer or escalate",
 "terms":{
-"1":"bound case classification clear contact follow incident next owned ownership path rout set severity step turn urgency",
-"2":"angry answer cannot email engineer log refund request triag urgent",
-"3":"draft operation respons",
-"4":"escalation ticket",
-"5":"customer reply",
+"1":"bound case classification clear contact escalat follow incident next owned ownership path rout set severity step team turn urgency",
+"2":"angry cannot email engineer log refund request triag urgent",
+"3":"answer draft escalation operation respons",
+"5":"customer reply ticket",
 "9":"support"
 }
 },
@@ -322,11 +322,11 @@
 "anchors":"assessment cours curriculum hire learn lesson objectiv program quizz six syllabus train week weekly workshop",
 "label":"omh-curriculum-design",
 "name":"curriculum-design",
-"situation":"Teaching goal that needs a course or syllabus",
+"situation":"Team training or course that needs a syllabus",
 "terms":{
-"1":"assumption criteria differentiation educator enablement goal learner modul outcom owner ready scop teach teachabl turn",
-"2":"hire new objectiv path program quizz sequenc six train week weekly workshop",
-"3":"cours lesson syllabus",
+"1":"assumption criteria differentiation educator enablement goal learner modul outcom owner ready scop teachabl team turn",
+"2":"hire new objectiv path program quizz sequenc six week weekly workshop",
+"3":"cours lesson syllabus train",
 "5":"learn plan",
 "6":"assessment curriculum",
 "8":"design"
@@ -375,7 +375,7 @@
 }
 },
 {
-"anchors":"blocker leadership operat ops priority queu team week weekly",
+"anchors":"blocker leadership operat ops priority queu week weekly",
 "label":"omh-ops-review",
 "name":"ops-review",
 "situation":"Recurring operating status and blockers",
@@ -389,14 +389,14 @@
 }
 },
 {
-"anchors":"history item log meet minut operat organiz retro retrospectiv rhythm scrum sprint standup team",
+"anchors":"history item log meet minut operat organiz retro retrospectiv rhythm scrum sprint standup",
 "label":"omh-operating-rhythm",
 "name":"operating-rhythm",
-"situation":"Keeping minutes, retros, and decision history",
+"situation":"Team minutes, retros, and decision history to keep",
 "terms":{
 "1":"herm maintain prepar recur ups",
-"2":"across follow note organiz review run standup team track writ",
-"3":"keep minut plan retrospectiv",
+"2":"across follow note organiz review run standup track writ",
+"3":"keep minut plan retrospectiv team",
 "4":"action item log record scrum",
 "5":"history retro rhythm",
 "6":"decision meet operat sprint"
@@ -436,13 +436,13 @@
 "anchors":"announcement backdrop background bug card competitor conversation cron cut digest edit explain explainer explanation feedback generation imag img infographic meet multilingual news photo pictur pull remov removal shareabl sum thumbnail triag vertical visual",
 "label":"omh-image-cards",
 "name":"img-summary",
-"situation":"Image card or infographic of content",
+"situation":"Infographic card for a report, PR, or release",
 "terms":{
-"1":"awar claim content domain herm prepar prs sourc specific suppli transformation turn without",
+"1":"awar claim domain herm prepar prs sourc specific suppli transformation turn without",
 "2":"backdrop background brief bug competitor conversation cron cut digest explain explainer explanation featur feedback multilingual news note page photo product pull remov removal request review sum support tool triag vertical",
 "3":"card edit generation issu research",
-"4":"announcement pictur pr shareabl thumbnail",
-"5":"img infographic meet releas report summary visual",
+"4":"announcement pictur shareabl thumbnail",
+"5":"img infographic meet pr releas report summary visual",
 "6":"imag prompt"
 }
 },
@@ -465,13 +465,12 @@
 "anchors":"direction don end figur handl know orchestration ownership take",
 "label":"omh-design-orchestration",
 "name":"design-orchestration",
-"situation":"Entire design problem to delegate",
+"situation":"Entire product design problem to delegate",
 "terms":{
 "1":"accessibility befor bound broad composition delegat entir executor exist frontend handoff herm known narrower neutral prepar qa quality visual",
 "2":"app don end figur handl know lane problem start",
 "3":"direction ownership",
-"4":"product",
-"5":"orchestration take",
+"5":"orchestration product take",
 "9":"design"
 }
 },
@@ -770,14 +769,13 @@
 "anchors":"automat automation blueprint continuously cron daily day digest discord job morn noth notify ops ping post put recur schedul send silent slack telegram timed weekly",
 "label":"omh-automation-blueprint",
 "name":"automation-blueprint",
-"situation":"Recurring scheduled job or reminder",
+"situation":"Recurring Hermes job on a schedule (cron, digests)",
 "terms":{
-"1":"agent chain claim context design execution host natural observ platform policy prepar reminder request retrieval silenc sourc status turn vs without",
-"2":"automat check continuously day delivery digest herm keep monitor noth notify ping put ready report silent summary task telegram timed updat watch weekly",
-"3":"job operation ops",
+"1":"agent chain claim context design execution host natural observ platform policy prepar request retrieval silenc sourc status turn vs without",
+"2":"automat check continuously day delivery herm keep monitor noth notify ping put ready report silent summary task telegram timed updat watch weekly",
+"3":"digest job operation ops",
 "4":"chang daily discord morn post send slack",
-"5":"cron",
-"6":"automation blueprint recur schedul"
+"6":"automation blueprint cron recur schedul"
 }
 },
 {
@@ -827,7 +825,7 @@
 }
 },
 {
-"anchors":"act cto dev engineer launch lead leadership operat ops pm risky roadmap security several ship team tech technical together tradeoff",
+"anchors":"act cto dev engineer launch lead leadership operat ops pm risky roadmap security several ship tech technical together tradeoff",
 "label":"omh-cto-loop",
 "name":"cto-loop",
 "situation":"Engineering leadership over roadmap and risk",
@@ -873,9 +871,9 @@
 "anchors":"break breakdown bug github hub reproduc reproduction safely step templat triag",
 "label":"omh-plan",
 "name":"plan",
-"situation":"Unplanned feature or bugfix",
+"situation":"Software feature or bugfix not yet planned",
 "terms":{
-"1":"bugfix execution includ ready unplan",
+"1":"bugfix execution includ ready softwar yet",
 "2":"break breakdown build fix github hub issu new pr product project reproduc reproduction request step structur task templat triag writ",
 "3":"handoff implementation safe start work",
 "4":"add befor bug coding",
@@ -888,9 +886,9 @@
 "anchors":"acceptanc approach consensus criteria dangerous implement ralplan refactor reviewabl risky safety sign unsaf",
 "label":"ulw-plan",
 "name":"ralplan",
-"situation":"High-stakes proposal needing approval",
+"situation":"High-stakes technical proposal needing approval",
 "terms":{
-"1":"alternativ approval architectur clear enough evidenc execution gate high need proposal requirement risk stak",
+"1":"alternativ approval architectur clear enough evidenc execution gate high need proposal requirement risk stak technical",
 "2":"acceptanc approach chang compar dangerous implement reviewabl safety sign turn unsaf verification",
 "3":"befor consensus test",
 "4":"command criteria issu pr refactor risky",
@@ -902,9 +900,9 @@
 "anchors":"adversarial advocat against angl approach architectur argu consensus devil hyperplan migration perspectiv stress",
 "label":"omh-adversarial-consensus",
 "name":"adversarial-consensus",
-"situation":"Proposal facing adversarial scrutiny",
+"situation":"Technical proposal facing adversarial scrutiny",
 "terms":{
-"1":"befor bundl consum direction facing input meant planner rather result scrutiny separat written",
+"1":"befor bundl consum direction facing input meant planner rather result scrutiny separat technical written",
 "2":"advocat against angl approach architectur argu decision design devil distill hyperplan migration multi multipl pick review stress test",
 "4":"attack hole independent perspectiv poke red team",
 "5":"consensus plan",
@@ -1004,9 +1002,9 @@
 "anchors":"benchmark bill bottleneck ci cloud cost databas don footprint goal grow hot hotspot inferenc investigation jank janky know latency leak long perf performanc pipelin profil query render slow storag take throughput token ultraperf ulw went",
 "label":"ulw-perf",
 "name":"ultraperf",
-"situation":"Unexplained slowness, leaks, or cost spikes",
+"situation":"Software slowness, memory leaks, or cost spikes",
 "terms":{
-"1":"actually behind budget expensiv inspect localiz loop problem regression runtim several slowness spik suspect system time unexplain yet",
+"1":"actually behind budget expensiv inspect localiz loop problem regression runtim several slowness softwar spik suspect system time yet",
 "2":"across app audit benchmark bill bottleneck cloud databas domain don fix footprint goal grow investigation jank janky keep know latency long measur model page perf pipelin profil take throughput ulw went",
 "3":"find hot hotspot inferenc leak path performanc render storag token",
 "4":"cost",
@@ -1014,7 +1012,7 @@
 }
 },
 {
-"anchors":"answer base driv googl knowledg live markdown notion obsidian organiz shar stor system team vault wiki",
+"anchors":"answer base driv googl knowledg live markdown notion obsidian organiz shar stor system vault wiki",
 "label":"omh-wiki",
 "name":"wiki",
 "situation":"Scattered knowledge needing a wiki",
@@ -1324,10 +1322,10 @@
 "anchors":"option probability rate scal text true typed",
 "label":"omh-jev-ask",
 "name":"jev-ask",
-"situation":"Jev asked for yes/no or pick-one odds",
+"situation":"User named Jev for yes/no or pick-one probabilities",
 "terms":{
-"1":"asked fit key named never odd order pros return suppli user want whether writ",
-"2":"true",
+"1":"fit key never order pros return suppli want whether writ",
+"2":"named true user",
 "3":"option pick probability rate scal scor text",
 "4":"typed",
 "6":"question",
@@ -1442,9 +1440,9 @@
 "anchors":"captur don fact forget naming remember rule save secret stor token",
 "label":"omh-memory-new",
 "name":"memory-new",
-"situation":"Remember a fact for future sessions",
+"situation":"Project fact to remember across future sessions",
 "terms":{
-"1":"ask assess bound choos class durabl exist explicit futur herm local past recall retention review scop session sourc sync target through user want",
+"1":"across ask assess bound choos class durabl exist explicit futur herm local past recall retention review scop session sourc sync target through user want",
 "2":"add defer don forget keep naming next refus rule secret time token",
 "3":"candidat captur decision stor",
 "4":"fact save",
@@ -1516,13 +1514,13 @@
 "anchors":"accessibility dictat driv free line messag mobil phon push quick short speech spoken talk ters voic",
 "label":"omh-voice-input",
 "name":"voice-operator",
-"situation":"Short spoken or mobile-style request",
+"situation":"Dictated voice note about project work or status",
 "terms":{
-"1":"action clarification clarify concis confirmation handoff herm produc receiv turn ux",
-"2":"accessibility command driv first free hand line messag note plan push quick speech status styl talk",
-"3":"ask short spoken",
-"4":"dictat phon ters",
-"5":"operator",
+"1":"action clarification clarify concis confirmation handoff herm produc project receiv turn ux work",
+"2":"accessibility command driv first free hand line messag plan push quick speech status styl talk",
+"3":"ask note short spoken",
+"4":"phon ters",
+"5":"dictat operator",
 "6":"mobil request",
 "9":"voic"
 }
@@ -1589,11 +1587,11 @@
 "anchors":"airport bitcoin btc crypto current direction exchang forecast game info information krw last live map near nearby night pric rate real restaurant scor seoul sport stock timezon today traffic usd weather won york zone",
 "label":"omh-live-info",
 "name":"live-info-operator",
-"situation":"Weather, exchange-rate, or sports lookups",
+"situation":"Live rates or scores a task must cite with sources",
 "terms":{
-"1":"access add after api availability claim correctness data financ gate herm nativ ordinary overlay policy prefer prepar quality read request result retrieval sourc supervis tool unit without",
-"2":"airport bitcoin btc crypto direction forecast freshness krw last lookup near nearby new night provider real restaurant scor seoul stock timezon today traffic usd won york",
-"3":"exchang information map sport zone",
+"1":"access add after api availability cite claim correctness data financ gate herm nativ ordinary overlay policy prefer prepar quality read request result retrieval sourc supervis task tool unit without",
+"2":"airport bitcoin btc crypto direction exchang forecast freshness krw last lookup near nearby new night provider real restaurant seoul stock timezon today traffic usd won york",
+"3":"information map scor sport zone",
 "4":"current game pric",
 "5":"info operator rate time weather",
 "7":"live"
@@ -1635,26 +1633,26 @@
 "anchors":"3d arm automation camera control cultivation devic equipment gated hardwar heat home iot klipper lab moonraker mushroom physical pi print printer raspberry relay robot robotic safety sensor snapmaker vla",
 "label":"omh-physical-device-readiness",
 "name":"physical-device-readiness",
-"situation":"Controlling a printer, robot, or IoT device",
+"situation":"Agent control of a robot, 3D printer, or IoT relay",
 "terms":{
-"1":"actuat adopt adoption affect connector controll dry emergency envelop explicit external miss move observation operator otherwis policy prepar provider requirement stop tool toolbelt trial unlock",
-"2":"agent arm automation befor check command cultivation equipment gated home klipper moonraker mushroom robotic snapmaker start vla",
-"3":"approval camera hardwar heat iot lab print run",
+"1":"actuat adopt adoption affect connector dry emergency envelop explicit external miss move observation operator otherwis policy prepar provider requirement stop tool toolbelt trial unlock",
+"2":"arm automation befor check command cultivation equipment gated home klipper moonraker mushroom robotic snapmaker start vla",
+"3":"agent approval camera hardwar heat iot lab print run",
 "4":"gate pi raspberry sensor",
 "5":"3d control printer relay robot safety",
 "6":"physical readiness",
-"9":"devic"
+"8":"devic"
 }
 },
 {
 "anchors":"announcement audienc changelog content copy customer draft email executiv guid land launch linkedin newsletter plain post publish rewrit social text tone version voic word",
 "label":"omh-content-operator",
 "name":"content-operator",
-"situation":"Writing or rewriting text for an audience",
+"situation":"Product or company copy to publish or rewrite",
 "terms":{
-"1":"access approval claim controll creation delivery export fact file gate hallucination herm prepar quality readm review scop send stakeholder summarization supervis transformation translation verification without work",
-"2":"changelog fix guid land launch linkedin page plain product sourc summariz version voic word",
-"3":"audienc customer email note ready releas social styl text",
+"1":"access approval claim company controll creation delivery export fact file gate hallucination herm prepar quality readm review scop send stakeholder summarization supervis transformation translation verification without work",
+"2":"changelog fix guid land launch linkedin page plain sourc summariz text version voic word",
+"3":"audienc customer email note product ready releas social styl",
 "4":"announcement executiv post publish",
 "5":"copy draft newsletter operator rewrit tone writ",
 "6":"content"
@@ -1738,7 +1736,7 @@
 "anchors":"achievement badg card clos earn newest progress recent shar tier unlock",
 "label":"omh-achievements",
 "name":"achievements",
-"situation":"Unlocked badges and achievement progress",
+"situation":"Hermes badges unlocked and achievement progress",
 "terms":{
 "1":"artifact ask local observation plugin prepar section summariz user want",
 "2":"card clos earn newest next shar summary",
