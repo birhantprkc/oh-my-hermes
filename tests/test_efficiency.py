@@ -409,7 +409,9 @@ class EfficiencyContractTests(unittest.TestCase):
         self.assertLessEqual(len(primer_context), AWARENESS_PRIMER_CONTEXT_CHAR_LIMIT)
         # 900 -> 1050: one line about the reply itself (the user's words, the
         # host's voice, these lines never quoted); the rail sat at 897.
-        self.assertLessEqual(len(primer_context), 1050)
+        # 1050 -> 1260: one line scoping OMH skills to requested work; the
+        # rail measured 1253.
+        self.assertLessEqual(len(primer_context), 1260)
         self.assertLessEqual(len(awareness_primer_markdown()), AWARENESS_PRIMER_MARKDOWN_CHAR_LIMIT)
         self.assertLessEqual(max(workflow_context_lengths.values()), AWARENESS_WORKFLOW_CONTEXT_CHAR_LIMIT)
         self.assertIn("Hermes-native workflow", primer_context)

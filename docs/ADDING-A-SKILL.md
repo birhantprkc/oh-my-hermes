@@ -145,6 +145,7 @@ adds the case covering it. For operators and agents,
 uv run python -m omh.cli docs workflows --output docs/WORKFLOWS.md
 uv run python -m omh.cli docs roles --output docs/ROLES.md
 uv run python -m omh.cli docs capability-families
+uv run python -m omh.cli docs skill-shortlist
 uv run python -m omh.cli cases demo --all --json > examples/use-cases/g1-g10-demo-cards.json
 ```
 
@@ -207,6 +208,7 @@ uv run python -m compileall -q src tests
 uv run python -m omh.cli docs workflows --check
 uv run python -m omh.cli docs roles --check
 uv run python -m omh.cli docs capability-families --check
+uv run python -m omh.cli docs skill-shortlist --check
 git diff --check
 PYTHONPATH=tests uv run python -m unittest discover -s tests
 ```

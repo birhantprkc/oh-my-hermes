@@ -42,6 +42,7 @@ from omh.maintenance.release import (
 )
 from omh.plugin_bundle.omh.awareness import awareness_primer_context
 from omh.plugin_bundle.omh.hooks import llm_hooks
+from omh.plugin_bundle.omh.skill_shortlist import skill_candidate_line, skill_candidates_for_turn
 from omh.plugin_bundle.omh.tools import BUILTIN_TOOL_NAMES
 from omh.plugin_bundle.omh.tools.todo_tool import OMH_TODO_SCHEMA
 from omh.skills import skill_index, structure_lint
@@ -495,6 +496,7 @@ class PreLlmCallScenarioTests(unittest.TestCase):
                 [
                     "first_turn_without_section",
                     "route_hint",
+                    "skill_candidates",
                     "role_marker",
                     "active_workflow",
                     "running_work_board",
@@ -540,10 +542,13 @@ class PreLlmCallScenarioTests(unittest.TestCase):
 
     def test_the_primer_limit_still_binds_the_primer_alone(self) -> None:
         self.assertLessEqual(len(awareness_primer_context()), AWARENESS_PRIMER_CONTEXT_CHAR_LIMIT)
-        # The first-turn scenario is the primer inside the fence, and nothing else.
+        # The first-turn scenario is the primer inside the fence, plus the
+        # request's skill candidate line when it has one, and nothing else.
         first_turn = per_turn_context.pre_llm_call_context_scenario_chars()["first_turn_without_section"]
         fence_overhead = len(llm_hooks.fence_omh_context(["x"])) - 1
-        self.assertEqual(first_turn, len(awareness_primer_context()) + fence_overhead)
+        line = skill_candidate_line(skill_candidates_for_turn(per_turn_context._PLAIN_REQUEST))
+        line_chars = len("\n\n" + line) if line else 0
+        self.assertEqual(first_turn, len(awareness_primer_context()) + fence_overhead + line_chars)
 
     def test_a_larger_injected_part_moves_the_measurement(self) -> None:
         before = per_turn_context.pre_llm_call_context_scenario_chars()["first_turn_without_section"]

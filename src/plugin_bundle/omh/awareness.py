@@ -6508,6 +6508,17 @@ def awareness_primer_context() -> str:
                 "briefings, coding handoffs, status -- and tracks prepared against observed."
             ),
             str(payload["first_turn_rule"]),
+            # Scope, stated about OMH's own skills rather than as a rule for
+            # the host. Measured on a live model before this line, an everyday
+            # message ("plan my weekend", "is it going to rain") loaded an OMH
+            # skill 39-59% of the time, mostly `omh-live-info` and
+            # `omh-decide`: the skill index matches the words, not whether the
+            # person is asking for work.
+            (
+                "OMH skills are for work the user asks for: code, projects, and team or business tasks. "
+                "Everyday questions -- weather, prices, travel, food, health, shopping, personal choices, "
+                "small talk -- need no OMH skill."
+            ),
             # Collision rule, previously reachable only inside the omh-routing
             # skill body — a document the model must have already chosen to
             # load before reading the rule that influences choosing. The

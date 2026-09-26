@@ -651,6 +651,11 @@ class PluginDistributionTests(unittest.TestCase):
             "capability_families.json",
             pyproject["tool"]["setuptools"]["package-data"]["omh.plugin_bundle.omh.tools"],
         )
+        self.assertTrue(root.joinpath("tools", "skill_shortlist.json").is_file())
+        self.assertIn(
+            "skill_shortlist.json",
+            pyproject["tool"]["setuptools"]["package-data"]["omh.plugin_bundle.omh.tools"],
+        )
         # The Hermes Desktop half. `dashboard` is a declared package so
         # `plugin_api.py` ships as a module the standalone gate imports;
         # `desktop/` is not one -- Hermes Desktop copies that whole folder

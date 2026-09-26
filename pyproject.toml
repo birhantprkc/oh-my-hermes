@@ -108,7 +108,7 @@ packages = [
 "omh.plugin_bundle.omh" = ["plugin.yaml", "config.yaml", "desktop/*.js"]
 "omh.plugin_bundle.omh.dashboard" = ["manifest.json"]
 "omh.plugin_bundle.omh.references" = ["*.md"]
-"omh.plugin_bundle.omh.tools" = ["capability_families.json"]
+"omh.plugin_bundle.omh.tools" = ["capability_families.json", "skill_shortlist.json"]
 
 [dependency-groups]
 dev = [

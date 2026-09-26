@@ -286,10 +286,37 @@ def _print_internal_error(exc: BaseException) -> None:
     print(json.dumps(payload, sort_keys=True, separators=(",", ":")), file=sys.stderr)
 
 
+def cmd_docs_skill_shortlist(args: argparse.Namespace) -> int:
+    from ..routing.skill_shortlist_sidecar import standalone_skill_shortlist_json
+
+    content = standalone_skill_shortlist_json()
+    output = (
+        Path(args.output).expanduser().resolve()
+        if args.output
+        else _default_plugin_tools_path("skill_shortlist.json")
+    )
+    if args.check:
+        try:
+            current = output.read_text(encoding="utf-8")
+        except OSError as exc:
+            raise OmhError(f"skill shortlist sidecar check failed: {exc}") from exc
+        if current != content:
+            raise OmhError(f"skill shortlist sidecar is stale: {output}")
+        _print_json({"ok": True, "checked": str(output)})
+        return 0
+    atomic_write_text(output, content)
+    _print_json({"written": str(output)})
+    return 0
+
+
 def _default_capability_families_path() -> Path:
+    return _default_plugin_tools_path("capability_families.json")
+
+
+def _default_plugin_tools_path(name: str) -> Path:
     from ..plugin_bundle.omh import tools as plugin_tools
 
-    return (Path(plugin_tools.__file__).resolve().parent / "capability_families.json").resolve()
+    return (Path(plugin_tools.__file__).resolve().parent / name).resolve()
 
 
 class TapSkillsCheckPayload(TypedDict):
@@ -464,6 +491,14 @@ def _add_docs_commands(sub) -> None:
     docs_capability_families.add_argument("--output", default=None)
     docs_capability_families.add_argument("--check", action="store_true")
     docs_capability_families.set_defaults(func=cmd_docs_capability_families)
+
+    docs_skill_shortlist = docs_sub.add_parser(
+        "skill-shortlist",
+        help="Write or check the generated plugin-bundle lexical skill shortlist index JSON.",
+    )
+    docs_skill_shortlist.add_argument("--output", default=None)
+    docs_skill_shortlist.add_argument("--check", action="store_true")
+    docs_skill_shortlist.set_defaults(func=cmd_docs_skill_shortlist)
 
     docs_ulw_inventory = docs_sub.add_parser(
         "ulw-inventory",

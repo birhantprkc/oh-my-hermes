@@ -52,6 +52,13 @@ _RUNNING_BOARD_UNITS = 6
 # so the scenario pins one message rather than claiming a bound over all of them.
 _ROUTED_REQUEST = "review this PR for bugs before merge"
 _PLAIN_REQUEST = "migrate the database schema and fix the tests"
+# A work request the rule table has no cue for, so the turn's only routing
+# text is the skill candidate line (`skill_shortlist`); three candidates, the
+# most the line names.
+_CANDIDATE_REQUEST = (
+    "Activation fell after we changed the signup flow and new users churn in their first week. "
+    "Where does retention break?"
+)
 
 
 class _RecordingPluginContext:
@@ -138,7 +145,11 @@ def _run_pre_llm_call(
     # `section` is whether the host rendered the awareness system prompt
     # section for this session, as every admitted host does; without it the
     # primer rides the fenced context, as on a host that lacks the API.
+    from ..plugin_bundle.omh.skill_shortlist import reset_candidate_line_state
+
     llm_hooks._reset_awareness_section_state()
+    # Every scenario runs under one session id; each measures a fresh session.
+    reset_candidate_line_state()
     try:
         with tempfile.TemporaryDirectory() as tmp:
             omh_home = Path(tmp) / "omh"
@@ -186,6 +197,8 @@ def pre_llm_call_context_scenario_chars() -> dict[str, int]:
       no OMH vocabulary, on a host that did not render the section (the primer
       alone, inside the fence). This is the fallback, not the default.
     - `route_hint`: a first turn on a routed request (the route hint).
+    - `skill_candidates`: a later turn on a work request that gets the skill
+      candidate line and no route hint.
     - `role_marker`: a later turn carrying an `[omh-role:...]` marker, the
       largest shipped role.
     - `active_workflow`: a later turn while a workflow is active.
@@ -194,7 +207,9 @@ def pre_llm_call_context_scenario_chars() -> dict[str, int]:
       included; the fallback's maximum.
     - `all_surfaces`: all of the above in one first turn. The parts add, so
       this is the largest of the seeded scenarios; it is not a bound on every
-      turn, because the parts listed below are not seeded.
+      turn, because the parts listed below are not seeded. The routed request
+      also gets a candidate line, since the line stands down only for a
+      workflow the person named.
 
     `pre_llm_call` can append these parts, none of which any scenario reaches,
     so the metric does not move when they grow:
@@ -223,6 +238,7 @@ def pre_llm_call_context_scenario_chars() -> dict[str, int]:
             no_seed, section=False, user_message=_PLAIN_REQUEST, is_first_turn=True
         ),
         "route_hint": _run_pre_llm_call(no_seed, user_message=_ROUTED_REQUEST, is_first_turn=True),
+        "skill_candidates": _run_pre_llm_call(no_seed, user_message=_CANDIDATE_REQUEST, **later),
         "role_marker": _largest_role("continue", no_seed, **later),
         "active_workflow": _run_pre_llm_call((_seed_active_workflow,), user_message="continue", **later),
         "running_work_board": _run_pre_llm_call((_seed_running_board,), user_message="continue", **later),
