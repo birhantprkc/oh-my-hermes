@@ -92,6 +92,7 @@ from ..installer import (
 from ..local_store import atomic_write_text
 from ..install.installer import DEFAULT_SKILL_PROFILE, SKILL_PROFILES
 from ..manifest import read_manifest
+from .update_change_note import record_update_change_note, update_change_note_lines
 from ..menubar_app import is_managed_menubar_install, setup_menubar_app, uninstall_menubar_app
 from ..mcp.host_config import install_mcp_host_config
 from ..mcp_bridge import MCP_HOST_CONFIG_RECIPE_HOSTS
@@ -343,6 +344,7 @@ def _install_result(args: argparse.Namespace) -> dict[str, object]:
     previous_release = _previous_release_update_state(paths)
     # Read before install_skill_pack rewrites the manifest.
     previous_manifest_sha256 = _previous_manifest_sha256(paths)
+    previous_manifest = read_manifest(paths.manifest_path)
     skill_profile = _resolved_skill_profile(args, paths)
     result = install_skill_pack(
         paths,
@@ -389,6 +391,13 @@ def _install_result(args: argparse.Namespace) -> dict[str, object]:
         command_package=result["command_package"],
         dry_run=bool(args.dry_run),
     )
+    if not args.dry_run and source == "builtin":
+        result["update_change_note"] = record_update_change_note(
+            paths,
+            previous_manifest=previous_manifest,
+            current_manifest=result,
+            previous_version=str((previous_manifest or {}).get("version") or ""),
+        )
     if not args.dry_run:
         operation_log = _install_operation_log(result, source=source)
         state_patch: dict[str, object] = {
@@ -4703,6 +4712,13 @@ def _print_install_summary(payload: dict[str, object], *, command: str, language
     print(_color(title, "1;36", use_color))
     if label == "update":
         _print_update_release_card(payload, source_label=source_label, language=language, use_color=use_color)
+        note = payload.get("update_change_note")
+        note_lines = update_change_note_lines(note, language=language) if isinstance(note, dict) else []
+        if note_lines:
+            print(_color(note_lines[0], "1;32", use_color))
+            for line in note_lines[1:]:
+                print(line)
+            print("")
     print(_color(tr(language, "summary"), "1;32", use_color))
     print(f"  {tr(language, 'skills_line', count=len(skills), path=payload.get('skills_dir', ''))}")
     release_update = payload.get("release_update", {})

@@ -2874,6 +2874,10 @@ def read_omh_status(omh_home: str | Path | None = None, limit: int = 5) -> dict[
         "runtime_state_present": bool(state),
         "latest_run_id": str(state.get("last_run_id", "")) if state else "",
         "plugin_session_end": _read_json(runtime_dir / "plugin-session-end.json"),
+        # Written by `omh update` (`commands/update_change_note.py`): the last
+        # update that changed skills, request routing, or this machine's model
+        # chains, so "what changed?" is answered from the record, not docs.
+        "last_update_change_note": _read_json(runtime_dir / "update-change-note.json"),
         "runs": runs,
         "active_executors": progress["active_executors"],
         "stale_executors": progress["stale_executors"],

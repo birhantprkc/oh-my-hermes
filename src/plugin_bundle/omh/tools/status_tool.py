@@ -13,7 +13,8 @@ OMH_STATUS_SCHEMA = {
     "name": "omh_status",
     "description": (
         "Read OMH metadata-only runtime status. Prepared handoffs are kept separate "
-        "from observed execution, review, CI, and merge evidence."
+        "from observed execution, review, CI, and merge evidence. Also says "
+        "what the last omh update changed."
     ),
     "parameters": {
         "type": "object",
