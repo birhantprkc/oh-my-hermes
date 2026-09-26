@@ -27,6 +27,7 @@ from ..quality.route_hint_alignment import build_route_hint_alignment_demo, form
 from ..quality.router_fast_path import build_router_fast_path_demo, format_router_fast_path_summary
 from ..quality.routing_accuracy import build_routing_accuracy_demo, format_routing_accuracy_summary
 from ..quality.routing_precision import build_routing_precision_demo, format_routing_precision_summary
+from ..quality.skill_reach import build_skill_reach_projection, format_skill_reach_summary
 from ..ingress import CHAT_SOURCES
 from ..installer import OmhError
 from .common import _print_json
@@ -39,6 +40,7 @@ DEMO_EPILOG = """Demo lanes:
   route-hint-alignment    Checks plugin/router route hints agree before Hermes speaks.
   context-brief-coverage  Checks compact OMH context briefs keep the right workflow visible.
   routing-precision       Guards against over-routing simple requests and missing OMH interventions.
+  skill-reach             Shows, per skill, which routing cases reach it and which skills none do.
   native-competition      Checks OMH frontmatter against representative native-skill descriptions.
   routing-accuracy        Measures whether routing is right per language, not merely unchanged.
   router-fast-path        Checks common chat turns stay on deterministic fast-path routes.
@@ -52,6 +54,7 @@ Recommended operator checks:
   omh demo localized-chat-copy --summary
   omh demo router-fast-path --summary
   omh demo routing-precision --summary
+  omh demo skill-reach --summary
   omh demo orchestration "I want to safely add a feature to this repo"
 
 Boundary:
@@ -131,6 +134,18 @@ def cmd_demo_routing_precision(args: argparse.Namespace) -> int:
         raise OmhError(str(exc)) from exc
     if args.summary:
         print(format_routing_precision_summary(payload))
+    else:
+        _print_json(payload)
+    return 0
+
+
+def cmd_demo_skill_reach(args: argparse.Namespace) -> int:
+    try:
+        payload = build_skill_reach_projection(source=args.source)
+    except ValueError as exc:
+        raise OmhError(str(exc)) from exc
+    if args.summary:
+        print(format_skill_reach_summary(payload))
     else:
         _print_json(payload)
     return 0
@@ -292,6 +307,22 @@ def _add_demo_commands(sub) -> None:
     precision_output.add_argument("--json", action="store_true", help="Print the full machine-readable JSON payload. This is the default.")
     precision_output.add_argument("--summary", action="store_true", help="Print a compact human-readable routing precision summary.")
     routing_precision.set_defaults(func=cmd_demo_routing_precision)
+
+    skill_reach = demo_sub.add_parser(
+        "skill-reach",
+        help="For operators and agents: show which routing cases reach each installable skill.",
+        description=(
+            "Project the routing-precision corpora per installable skill: intervention cases that dispatch "
+            "to it without naming it, cases that reach it only when addressed, and negative controls that "
+            "enter its territory without routing there. Skills with no coverage are listed with their "
+            "recorded baseline reason."
+        ),
+    )
+    skill_reach.add_argument("--source", choices=CHAT_SOURCES, default="discord")
+    skill_reach_output = skill_reach.add_mutually_exclusive_group()
+    skill_reach_output.add_argument("--json", action="store_true", help="Print the full machine-readable JSON payload. This is the default.")
+    skill_reach_output.add_argument("--summary", action="store_true", help="Print a compact human-readable skill reach summary.")
+    skill_reach.set_defaults(func=cmd_demo_skill_reach)
 
     native_competition = demo_sub.add_parser(
         "native-competition",
