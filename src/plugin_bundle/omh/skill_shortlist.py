@@ -390,10 +390,10 @@ def skill_candidate_line(candidates: tuple[tuple[str, str], ...]) -> str:
     if not candidates:
         return ""
     options = "; ".join(f"{label} ({situation})" for label, situation in candidates)
-    # The exact call form, because the skill index groups skills under a
-    # category and a model that prefixes it (`operator/omh-x`) gets "not
-    # found": Hermes resolves category paths only in its own skills dirs,
-    # not in the external dir these skills are installed from.
+    # The exact call form, because a model that guesses a category prefix
+    # gets "not found" when the guess is wrong (`operator/omh-x` for a skill
+    # filed under `reviewer/`). Hermes resolves a correct `category/name` in
+    # external dirs too; the bare name is the form that cannot be wrong.
     return (
         f"Skills that may fit this request: {options}. "
         "If one matches what the user described, load it before you answer with skill_view and "
