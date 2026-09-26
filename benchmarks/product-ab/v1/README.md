@@ -475,6 +475,20 @@ modules for the touched packages. The pull request's own tests are never among
 them: they are the hidden validator, and a gate that ran them would hand the
 candidate the answer.
 
+Those pinned commands name nothing about the task, and the candidate has run
+them green by the time the gate sees them, so on their own the gate can only
+re-run the model's own criteria. The gate therefore also runs the shipped
+task-linked postcondition (`omh.coding.postconditions`, the same rule a fanout
+unit declaring `task_linked_test_runner` is held to): every pre-existing test
+module that directly imports a file the candidate changed, read from the local
+codegraph over the candidate's uncommitted diff against the merge base, run as
+one `PYTHONPATH=tests python3 -m unittest …` command. The prompt carries the
+same rule as a criterion. The pull request's own test files are excluded from
+that selection as they are from the regression set, and the record keeps the
+resolved selection under `verification_gate.task_linked_postcondition`. It is
+still a regression check -- on an untouched checkout it selects nothing -- so
+the disclosure below stands.
+
 **The gate never runs the hidden validator, and on every admitted task it
 passes on an untouched checkout, so it can catch regressions, never a missing
 fix.** That follows from how the corpus is built, not from chance: the probe
@@ -566,8 +580,8 @@ delta is refused by name rather than computed over whichever pairs happened to
 be priced. `_cost()` raises rather than substitute a zero, so a future caller
 that forgets to check cannot reintroduce the same number.
 
-Wall clock counts the verification gate. The gate runs a compile pass and up to
-six unittest modules, on the OMH arms only, so charging it to nobody would take
+Wall clock counts the verification gate. The gate runs a compile pass, up to
+six regression modules, and the task-linked test modules, on the OMH arms only, so charging it to nobody would take
 minutes off exactly one side of the comparison and hand them to the "faster"
 headline.
 

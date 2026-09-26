@@ -68,6 +68,20 @@ All notable changes will be documented here.
   control and 17 without. A case where the router asks with the skill first
   is shown as `shortlist_first_cases` and not counted as reach. No trigger
   or routing behavior changed.
+- **A fanout unit's "done" can include the tests its own changes reach.** A
+  unit may declare `task_linked_test_runner` (for example
+  `PYTHONPATH=tests python -m unittest`). Under `--run-verification` the
+  dispatcher reads the committed diff it observed, selects every test module
+  that directly imports a changed file through the local codegraph, and runs
+  the runner on them as one more dispatcher-observed check, so its exit status
+  decides the unit the way every declared check does; the prompt's criterion
+  names the same rule. A failing check now records `unit_state_reason:
+  verification_failed` instead of `verification_not_observed`, and an earlier
+  attempt's journaled pass no longer outlives a failure in the current one. A
+  change no test imports adds nothing, and an unreadable diff fails closed. The
+  product A/B bench's gate runs the same rule over the candidate's diff (the
+  task's own test files excluded), so it no longer only re-runs the criteria
+  the model already ran green.
 
 - **The plugin admits a Hermes git checkout by the release it resolves, not
   the install stamp's placeholder.** Released Hermes through 0.21.5 hard-codes

@@ -287,9 +287,10 @@ def completion_file_in_scope(file_scope: Sequence[str]) -> bool:
 def gate_disclosure(task: Mapping[str, Any]) -> dict[str, Any]:
     """What the verification gate can and cannot see on this task.
 
-    `covers_target` is a constant. The gate runs a compile pass and the
-    pre-existing regression modules; the pull request's own tests are the
-    hidden validator and never run in it. `regression_green_at_merge_base` is
+    `covers_target` is a constant. The gate runs a compile pass, the
+    pre-existing regression modules, and the pre-existing tests that directly
+    import the files the candidate changed; the pull request's own tests are
+    the hidden validator and never run in it. `regression_green_at_merge_base` is
     copied from the corpus probe, which admits a task only when that set is
     green on the untouched checkout -- so on every admitted task the gate
     passes before the candidate has changed anything, and it can catch a
@@ -433,11 +434,11 @@ def execute_one(
                     # They are modules the pull request did not touch, so the
                     # restore cannot remove a legitimate change.
                     grading.restore_regression_modules(repository, task, workspace)
-                    verification = arms.run_verification(
+                    verification = _run_gate(
                         python_executable=python_executable,
                         workspace=workspace,
                         scratch=scratch,
-                        commands=list(task["verification_commands"]),
+                        task=task,
                         timeout=int(timeouts["verification"]),
                     )
                     gate_seconds += float(verification.get("seconds") or 0.0)
@@ -457,11 +458,11 @@ def execute_one(
                             )
                         )
                         grading.restore_regression_modules(repository, task, workspace)
-                        verification = arms.run_verification(
+                        verification = _run_gate(
                             python_executable=python_executable,
                             workspace=workspace,
                             scratch=scratch,
-                            commands=list(task["verification_commands"]),
+                            task=task,
                             timeout=int(timeouts["verification"]),
                         )
                         gate_seconds += float(verification.get("seconds") or 0.0)
@@ -563,6 +564,40 @@ def execute_one(
         raise ValueError("benchmark record failed metadata-only artifact safety")
     lane.append_jsonl(output, record)
     return record
+
+
+def _run_gate(
+    *,
+    python_executable: str,
+    workspace: Path,
+    scratch: Path,
+    task: Mapping[str, Any],
+    timeout: int,
+) -> dict[str, Any]:
+    """The corpus checks plus the task-linked postcondition, resolved per run.
+
+    The corpus checks are the task's pinned criteria, which the candidate has
+    already run green by the time the gate sees them. The task-linked command
+    is derived from what this candidate actually changed -- the pre-existing
+    tests that directly import its edited files -- so the gate can disagree
+    with a candidate whose edits broke the code those tests exercise. It is
+    re-resolved on every gate run because a repair turn changes the diff.
+    """
+
+    linked = arms.task_linked_postcondition(
+        workspace, str(task["merge_base"]), list(task.get("test_paths") or [])
+    )
+    commands = list(task["verification_commands"])
+    if linked["command"]:
+        commands.append(str(linked["command"]))
+    verification = arms.run_verification(
+        python_executable=python_executable,
+        workspace=workspace,
+        scratch=scratch,
+        commands=commands,
+        timeout=timeout,
+    )
+    return {**verification, "task_linked_postcondition": linked}
 
 
 def _repair_prompt(original: str, verification: Mapping[str, Any]) -> str:

@@ -26,6 +26,7 @@ import time
 from typing import Any
 
 import lane
+import repo as repo_lib
 
 #: Both arms carry the identical completion contract, so a completion claim
 #: means the same thing on both sides of the comparison.
@@ -247,17 +248,80 @@ def unit_file_scope() -> list[str]:
     return ["src/", "tests/", lane.COMPLETION_FILE]
 
 
+#: The runner the task-linked postcondition appends its selected test paths
+#: to, spelled with the corpus interpreter so `gate_invocation` renders and
+#: runs it exactly like every other check.
+TASK_LINKED_RUNNER = f"{CORPUS_INTERPRETER} -m unittest"
+
+
+def postconditions() -> Any:
+    """The shipped task-linked postcondition module, read in process."""
+
+    prompt_protocol()  # puts the checkout on sys.path
+    from omh.coding import postconditions as module  # noqa: PLC0415
+
+    return module
+
+
+def task_linked_criterion() -> str:
+    """The shipped task-linked criterion, naming the command the gate runs."""
+
+    prefix, argv = gate_invocation(TASK_LINKED_RUNNER)
+    return postconditions().task_linked_criterion(shlex.join([*prefix, *argv]))
+
+
+def workspace_changed_paths(workspace: Path, merge_base: str) -> list[str]:
+    """Every path the candidate changed: tracked edits against the base plus new files.
+
+    The candidate never commits, so the diff is the working tree against the
+    merge base, not a commit range.
+    """
+
+    tracked = repo_lib.git(workspace, "-c", "core.quotepath=off", "diff", "--name-only", "--no-renames", merge_base)
+    untracked = repo_lib.git(workspace, "-c", "core.quotepath=off", "ls-files", "--others", "--exclude-standard")
+    return sorted({line for line in (tracked + untracked).splitlines() if line.strip()})
+
+
+def task_linked_postcondition(
+    workspace: Path, merge_base: str, hidden_test_paths: Sequence[str]
+) -> dict[str, Any]:
+    """The shipped rule resolved against the candidate's own changes.
+
+    The pull request's own test files are excluded, as they are from the
+    regression set: they are the hidden validator, and their merge-base copies
+    assert the behaviour the pull request changed, so running them would push
+    a correct fix back toward the old behaviour.
+    """
+
+    module = postconditions()
+    from omh.codegraph import build_codegraph  # noqa: PLC0415
+
+    return module.resolve_task_linked_postcondition(
+        build_codegraph(workspace),
+        workspace_changed_paths(workspace, merge_base),
+        TASK_LINKED_RUNNER,
+        exclude_test_paths=list(hidden_test_paths),
+    )
+
+
 def benchmark_unit(
     *, file_scope: Sequence[str], checks: Sequence[str], route: Mapping[str, Any]
 ) -> dict[str, Any]:
-    """The unit shape the shipped protocol functions read."""
+    """The unit shape the shipped protocol functions read.
+
+    The task-linked criterion is the one the shipped contract carries for a
+    unit that declares a test runner; the gate runs the command it names.
+    """
 
     return {
         "unit_id": "task",
         "title": "benchmark task",
         "role": "implementation",
         "boundary": {"file_scope": list(file_scope), "do_not_touch": []},
-        "integration_checks": [criterion_for_command(check) for check in checks],
+        "integration_checks": [
+            *(criterion_for_command(check) for check in checks),
+            task_linked_criterion(),
+        ],
         "handoff": {"model_route": dict(route)},
     }
 
