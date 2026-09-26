@@ -324,7 +324,8 @@ class LineTests(unittest.TestCase):
         line = bundle.skill_candidate_line(candidates)
         for label, situation in candidates:
             self.assertIn(f"{label} ({situation})", line)
-        self.assertIn("skill_view", line)
+        self.assertIn(f'skill_view(name="{candidates[0][0]}")', line)
+        self.assertIn("no category prefix", line)
         self.assertNotIn("OMH", line)
         self.assertEqual(bundle.skill_candidate_line(()), "")
 
