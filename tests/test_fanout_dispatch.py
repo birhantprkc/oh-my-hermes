@@ -2342,6 +2342,41 @@ class FanoutDispatchTelemetryTests(unittest.TestCase):
                 self.assertNotIn("output_tail", entry)
                 self.assertNotIn("planned_argv", entry)
 
+    def test_units_a_hermes_session_dispatched_record_that_session(self) -> None:
+        # The cost receipt attributes a unit to a conversation from this field
+        # alone; Hermes injects HERMES_SESSION_ID into every terminal command.
+        with TemporaryDirectory() as tmp:
+            paths, repo, sha, contract = self._setup(tmp)
+            with mock.patch.dict(os.environ, {"HERMES_SESSION_ID": "20260926_101500_ab12cd"}):
+                dispatch_fanout(
+                    paths, contract, goal_text=_GOAL, repo_root=repo, base_sha=sha,
+                    runner=_agent_runner(), readiness=_ready,
+                )
+            stored = json.loads(
+                fanout_dispatch_summary_path(paths, str(contract["fanout_id"])).read_text(encoding="utf-8")
+            )
+            self.assertEqual(stored["origin_session_id"], "20260926_101500_ab12cd")
+            self.assertTrue(stored["units"])
+            for entry in stored["units"]:
+                self.assertEqual(entry["origin_session_id"], "20260926_101500_ab12cd")
+
+    def test_a_dispatch_outside_hermes_records_no_origin_session(self) -> None:
+        for environ in ({}, {"HERMES_SESSION_ID": "not an id; rm -rf"}):
+            with self.subTest(environ=environ), TemporaryDirectory() as tmp:
+                paths, repo, sha, contract = self._setup(tmp)
+                cleared = {key: value for key, value in os.environ.items() if key != "HERMES_SESSION_ID"}
+                with mock.patch.dict(os.environ, {**cleared, **environ}, clear=True):
+                    dispatch_fanout(
+                        paths, contract, goal_text=_GOAL, repo_root=repo, base_sha=sha,
+                        runner=_agent_runner(), readiness=_ready,
+                    )
+                stored = json.loads(
+                    fanout_dispatch_summary_path(paths, str(contract["fanout_id"])).read_text(encoding="utf-8")
+                )
+                self.assertNotIn("origin_session_id", stored)
+                for entry in stored["units"]:
+                    self.assertNotIn("origin_session_id", entry)
+
     def test_spawned_unit_carries_the_recorded_capability_snapshot_for_its_owner(self) -> None:
         with TemporaryDirectory() as tmp:
             paths, repo, sha, contract = self._setup(tmp)

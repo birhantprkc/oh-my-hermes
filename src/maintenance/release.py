@@ -177,7 +177,13 @@ SKILL_INDEX_LINE_CHAR_LIMIT = 100
 # `pre_llm_call` injection that Hermes replays every later turn; 44 schema
 # characters (deferrable under the default tool search) is the cheaper seam.
 # Re-derived from the producer.
-PLUGIN_TOOL_SCHEMA_CHAR_LIMIT = 59302
+# 59302 -> 59451: `omh_run_summary` now also answers "what did this work
+# cost?" from its `cost_receipt`. The first sentence names the receipt because
+# it is all the tool_search listing shows (60 chars), and one closing sentence
+# tells the model to relay the receipt with observed cost, unpriced usage and
+# missing records kept apart. Reusing this tool instead of adding one keeps the
+# growth to those two sentences. Re-derived from the producer.
+PLUGIN_TOOL_SCHEMA_CHAR_LIMIT = 59451
 # The largest fenced `pre_llm_call` context over the named scenario set in
 # `src/maintenance/per_turn_context.py` (the `all_surfaces` scenario). Hermes
 # replays each turn's injection from `api_content` on every later turn, so this

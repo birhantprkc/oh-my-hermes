@@ -97,6 +97,17 @@ All notable changes will be documented here.
   `last_update_change_note`, so asking Hermes "what changed in OMH?" answers
   from the record; nothing is added to the per-turn context. English by
   default; `--language` / `OMH_LANG` localize it.
+- **Asking "how much did this task cost?" in chat gets a receipt.**
+  `omh_run_summary` now returns a `cost_receipt` (`omh_cost_receipt/v1`) that
+  sums the calling conversation's recorded spend: its session rows and
+  compression continuations, every delegated Hermes child below it, and fanout
+  units that recorded the conversation as their origin. `omh coding fanout
+  dispatch` stamps that origin (`origin_session_id`) from the
+  `HERMES_SESSION_ID` Hermes gives terminal commands. Observed cost, usage with
+  no recorded price, and records with no usage stay apart; nothing is
+  estimated, and every receipt names what it does not cover. Operators get the
+  same text from `omh quality-evidence cost-receipt --session <id>` (`--json`
+  for the payload).
 
 - **The plugin admits a Hermes git checkout by the release it resolves, not
   the install stamp's placeholder.** Released Hermes through 0.21.5 hard-codes

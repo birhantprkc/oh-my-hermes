@@ -11,6 +11,11 @@ with the numbers coming from Hermes' own session accounting in
 token usage. The tool reads the calling session's row plus its
 ``delegate_task`` children (one level, matched via ``parent_session_id``)
 read-only, and renders the lines in the requested language.
+
+The payload also carries ``cost_receipt`` (``cost_receipt.py``), the answer to
+"how much did this work cost?": a wider scope (compression continuations,
+nested delegates, fanout units) with observed cost kept apart from unpriced
+usage and missing records.
 """
 from __future__ import annotations
 
@@ -23,6 +28,7 @@ from pathlib import Path
 from typing import Any
 
 from ..host_observation import OBSERVATION_SCHEMA, attach_public_observation, observe_plugin_tool_call
+from ..cost_receipt import build_cost_receipt
 
 RUN_SUMMARY_CLAIM_BOUNDARY = (
     "Observed host accounting from state.db (session row plus direct "
@@ -50,12 +56,14 @@ _ELAPSED_UNKNOWN: str = "unknown"
 OMH_RUN_SUMMARY_SCHEMA = {
     "name": "omh_run_summary",
     "description": (
-        "Render the localized end-of-run summary (elapsed seconds and token "
-        "usage) from Hermes' own session accounting — the calling session plus "
-        "its delegate_task children. Call it once when a workflow run (e.g. "
-        "ulw-work) completes, pass the language the conversation is in, and "
-        "print summary_text verbatim as the closing lines. Never estimate "
-        "these numbers yourself."
+        "Run summary and cost receipt from Hermes' own accounting. Render "
+        "the localized end-of-run summary (elapsed seconds and token usage) — "
+        "the calling session plus its delegate_task children. Call it once "
+        "when a workflow run (e.g. ulw-work) completes, pass the language the "
+        "conversation is in, and print summary_text verbatim as the closing "
+        "lines. Never estimate these numbers yourself. When the user asks what "
+        "this work cost, relay cost_receipt.text: observed cost, unpriced "
+        "usage and missing records stay apart."
     ),
     "parameters": {
         "type": "object",
@@ -184,6 +192,13 @@ def omh_run_summary_handler(args: dict[str, Any], **kwargs) -> str:
         )
         return json.dumps(attach_public_observation(payload, observation), sort_keys=True)
 
+    # Metadata only; built beside the summary so a cost question and the
+    # closing lines read the same accounting.
+    payload["cost_receipt"] = build_cost_receipt(
+        hermes_home=home,
+        omh_home=runtime_paths.plugin_home(args.get("omh_home")),
+        session_id=session_id,
+    )
     session, children, models = _rows(home / "state.db", session_id)
     if session is None:
         payload["status"] = "not_observed"
